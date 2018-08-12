@@ -218,7 +218,8 @@ final class IssueCommentSectionController:
     func edit(markdown: String) {
         guard let width = collectionContext?.insetContainerSize.width else { return }
         let bodyModels = MarkdownModels(
-            markdown,
+            // strip githawk signatures on edit
+            CheckIfSentWithGitHawk(markdown: markdown).markdown,
             owner: model.owner,
             repo: model.repo,
             width: width,
@@ -442,7 +443,7 @@ final class IssueCommentSectionController:
     // MARK: IssueCommentDoubleTapDelegate
     
     func didDoubleTap(cell: IssueCommentBaseCell) {
-        let reaction = ReactionContent.thumbsUp
+        guard let reaction = ReactionContent.defaultReaction else { return }
         guard let reactions = reactionMutation ?? self.object?.reactions,
             !reactions.viewerDidReact(reaction: reaction)
             else { return }
