@@ -27,5 +27,5 @@ final class RepositoryReadmeModel: ListDiffable {
         // for use w/ binding SC
         return true
     }
-
+    
 }

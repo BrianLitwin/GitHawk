@@ -11,23 +11,25 @@ import IGListKit
 
 final class RepositoryCodeDirectoryViewController: BaseListViewController<NSNumber>,
 BaseListViewControllerDataSource,
-ListSingleSectionControllerDelegate {
+ListSingleSectionControllerDelegate,
+RepoBranchUpdateable
+{
 
     private let client: GithubClient
-    private let branch: String
     private let path: FilePath
     private let repo: RepositoryDetails
     private var files = [RepositoryFile]()
+    private var repoBranches: RepoBranches
 
     init(
         client: GithubClient,
         repo: RepositoryDetails,
-        branch: String,
+        repoBranches: RepoBranches,
         path: FilePath
         ) {
         self.client = client
         self.repo = repo
-        self.branch = branch
+        self.repoBranches = repoBranches
         self.path = path
 
         super.init(
@@ -55,12 +57,12 @@ ListSingleSectionControllerDelegate {
     static func createRoot(
         client: GithubClient,
         repo: RepositoryDetails,
-        branch: String
+        repoBranches: RepoBranches
         ) -> RepositoryCodeDirectoryViewController {
         return RepositoryCodeDirectoryViewController(
             client: client,
             repo: repo,
-            branch: branch,
+            repoBranches: repoBranches,
             path: FilePath(components: [])
         )
     }
@@ -77,7 +79,7 @@ ListSingleSectionControllerDelegate {
         client.fetchFiles(
         owner: repo.owner,
         repo: repo.name,
-        branch: branch,
+        branch: repoBranches.currentBranch,
         path: path.path
         ) { [weak self] (result) in
             switch result {
@@ -92,6 +94,7 @@ ListSingleSectionControllerDelegate {
 
     // MARK: BaseListViewControllerDataSource
 
+    
     func headModels(listAdapter: ListAdapter) -> [ListDiffable] {
         return []
     }
@@ -139,6 +142,14 @@ ListSingleSectionControllerDelegate {
             showFile(at: nextPath)
         }
     }
+    
+    
+    // MARK: RepoBranchUpdateable
+    
+    func updateRepoBranch(with repoBranches: RepoBranches) {
+        self.repoBranches = repoBranches
+        fetch(page: nil)
+    }
 
 }
 
@@ -150,7 +161,7 @@ extension RepositoryCodeDirectoryViewController {
         let controller = RepositoryCodeDirectoryViewController(
             client: client,
             repo: repo,
-            branch: branch,
+            repoBranches: repoBranches,
             path: path
         )
 
@@ -163,19 +174,19 @@ extension RepositoryCodeDirectoryViewController {
         if path.hasBinarySuffix {
             controller = RepositoryWebViewController(
                 repo: repo,
-                branch: branch,
+                branch: repoBranches.currentBranch,
                 path: path
             )
         } else {
             controller = RepositoryCodeBlobViewController(
                 client: client,
                 repo: repo,
-                branch: branch,
+                branch: repoBranches.currentBranch,
                 path: path
             )
         }
 
         navigationController?.pushViewController(controller, animated: trueUnlessReduceMotionEnabled)
     }
-
+    
 }

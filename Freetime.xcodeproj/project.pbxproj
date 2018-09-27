@@ -437,6 +437,13 @@
 		98F9F4001F9CCFFE005A0266 /* ImageUploadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F9F3FD1F9CCFFE005A0266 /* ImageUploadTableViewController.swift */; };
 		98F9F4011F9CCFFE005A0266 /* ImgurClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F9F3FE1F9CCFFE005A0266 /* ImgurClient.swift */; };
 		98F9F4031F9CD006005A0266 /* Image+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F9F4021F9CD006005A0266 /* Image+Base64.swift */; };
+		BD167C9521590E660009678F /* SwitchBranches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C9421590E660009678F /* SwitchBranches.swift */; };
+		BD167C98215A7BB00009678F /* GitHubClient+RepoBranches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C97215A7BB00009678F /* GitHubClient+RepoBranches.swift */; };
+		BD167C9A215A7F100009678F /* RepoBranchesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C99215A7F100009678F /* RepoBranchesViewModel.swift */; };
+		BD167C9C215A7F420009678F /* RepoBranchesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C9B215A7F420009678F /* RepoBranchesCell.swift */; };
+		BD167C9E215A7F6D0009678F /* RepoBranchesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C9D215A7F6D0009678F /* RepoBranchesSectionController.swift */; };
+		BD167CA0215A7F900009678F /* RepoBranchesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167C9F215A7F900009678F /* RepoBranchesViewController.swift */; };
+		BD167CA2215A7FBD0009678F /* RepoBranches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD167CA1215A7FBD0009678F /* RepoBranches.swift */; };
 		BD3761B0209E032500401DFB /* BookmarkNavigationItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */; };
 		BD89007E20B8844B0026013F /* NetworkingURLPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */; };
 		D8BAD0601FDA0A1A00C41071 /* LabelListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BAD05F1FDA0A1A00C41071 /* LabelListCell.swift */; };
@@ -969,6 +976,13 @@
 		A4D6EAEE85A1F4878338D48C /* Pods-FreetimeWatch Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreetimeWatch Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FreetimeWatch Extension/Pods-FreetimeWatch Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		ACAE4A11E9671879046F0CE7 /* Pods-FreetimeWatch.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FreetimeWatch.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-FreetimeWatch/Pods-FreetimeWatch.testflight.xcconfig"; sourceTree = "<group>"; };
 		B3C439BE890EECD7C0C692C5 /* Pods-Freetime.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Freetime.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Freetime/Pods-Freetime.testflight.xcconfig"; sourceTree = "<group>"; };
+		BD167C9421590E660009678F /* SwitchBranches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBranches.swift; sourceTree = "<group>"; };
+		BD167C97215A7BB00009678F /* GitHubClient+RepoBranches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GitHubClient+RepoBranches.swift"; sourceTree = "<group>"; };
+		BD167C99215A7F100009678F /* RepoBranchesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoBranchesViewModel.swift; sourceTree = "<group>"; };
+		BD167C9B215A7F420009678F /* RepoBranchesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoBranchesCell.swift; sourceTree = "<group>"; };
+		BD167C9D215A7F6D0009678F /* RepoBranchesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoBranchesSectionController.swift; sourceTree = "<group>"; };
+		BD167C9F215A7F900009678F /* RepoBranchesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoBranchesViewController.swift; sourceTree = "<group>"; };
+		BD167CA1215A7FBD0009678F /* RepoBranches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoBranches.swift; sourceTree = "<group>"; };
 		BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkNavigationItemTests.swift; sourceTree = "<group>"; };
 		BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingURLPathTests.swift; sourceTree = "<group>"; };
 		D396E0DA66FED629384A84BC /* Pods_FreetimeWatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FreetimeWatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1540,6 +1554,7 @@
 			children = (
 				DCA5ED171FAEF3220072F074 /* Bookmark Tests */,
 				2981A8A61EFEBEF900E25EF1 /* EmojiTests.swift */,
+				BD167C9421590E660009678F /* SwitchBranches.swift */,
 				2986B35D1FD462AA00E3CFC6 /* FilePathTests.swift */,
 				296B4E331F7C80B800C16887 /* GraphQLIDDecodeTests.swift */,
 				297AE84E1EC0D58A00B44A1F /* Info.plist */,
@@ -2032,6 +2047,7 @@
 				986B87371F2CB29700AAB55C /* RepositorySummaryCell.swift */,
 				986B87351F2CB28C00AAB55C /* RepositorySummarySectionController.swift */,
 				2905AFAE1F7357FA0015AE32 /* RepositoryViewController.swift */,
+				BD167C96215A7B320009678F /* RepoBranches */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2081,6 +2097,19 @@
 				98F9F3FE1F9CCFFE005A0266 /* ImgurClient.swift */,
 			);
 			path = "Image Upload";
+			sourceTree = "<group>";
+		};
+		BD167C96215A7B320009678F /* RepoBranches */ = {
+			isa = PBXGroup;
+			children = (
+				BD167CA1215A7FBD0009678F /* RepoBranches.swift */,
+				BD167C9F215A7F900009678F /* RepoBranchesViewController.swift */,
+				BD167C97215A7BB00009678F /* GitHubClient+RepoBranches.swift */,
+				BD167C9B215A7F420009678F /* RepoBranchesCell.swift */,
+				BD167C99215A7F100009678F /* RepoBranchesViewModel.swift */,
+				BD167C9D215A7F6D0009678F /* RepoBranchesSectionController.swift */,
+			);
+			path = RepoBranches;
 			sourceTree = "<group>";
 		};
 		CF4CC0BFE456879DD6DBC714 /* Frameworks */ = {
@@ -2675,6 +2704,7 @@
 			files = (
 				D8BAD0601FDA0A1A00C41071 /* LabelListCell.swift in Sources */,
 				290744A91F24D2DA00FD9E48 /* AddCommentClient.swift in Sources */,
+				BD167C9A215A7F100009678F /* RepoBranchesViewModel.swift in Sources */,
 				29DAA7AD20202A320029277A /* PullRequestReviewReplyCell.swift in Sources */,
 				29316DC51ECC9841007CAE3F /* Alamofire+GithubAPI.swift in Sources */,
 				75A0ACF51F79A82D0062D99A /* AlertAction.swift in Sources */,
@@ -2691,6 +2721,7 @@
 				29CEA5CD1F84DB1B009827DB /* BaseListViewController.swift in Sources */,
 				299F63E0205DDF6B0015D901 /* UIViewController+Routing.swift in Sources */,
 				98835BD41F1A17EE005BA24F /* Bundle+Version.swift in Sources */,
+				BD167C9E215A7F6D0009678F /* RepoBranchesSectionController.swift in Sources */,
 				29316DB51ECC7DEB007CAE3F /* ButtonCell.swift in Sources */,
 				D8BAD0661FDF224600C41071 /* WrappingStaticSpacingFlowLayout.swift in Sources */,
 				98003D8D1FCAD7FC00755C17 /* LabelDetails.swift in Sources */,
@@ -2854,6 +2885,7 @@
 				2928C78C1F15D80E0000D06D /* IssueRenamedSectionController.swift in Sources */,
 				2928C78E1F15DF1B0000D06D /* IssueRenamedString.swift in Sources */,
 				297A372E1F17018F0081C04E /* IssueRequestCell.swift in Sources */,
+				BD167C98215A7BB00009678F /* GitHubClient+RepoBranches.swift in Sources */,
 				297A372C1F1700BC0081C04E /* IssueRequestModel.swift in Sources */,
 				297A37301F1704C10081C04E /* IssueRequestSectionController.swift in Sources */,
 				29F7F05C1F2A751B00F6075D /* IssueResult.swift in Sources */,
@@ -2864,6 +2896,7 @@
 				292CD3CE1F0DB8E700D3D57B /* IssueReviewModel.swift in Sources */,
 				29F3A18A20CC017700645CB7 /* Repository.swift in Sources */,
 				292CD3CC1F0DB89600D3D57B /* IssueReviewSectionController.swift in Sources */,
+				BD167C9C215A7F420009678F /* RepoBranchesCell.swift in Sources */,
 				295C31CF1F0AA67600521CED /* IssueStatus+ButtonState.swift in Sources */,
 				290D2A421F04D3470082E6CC /* IssueStatus.swift in Sources */,
 				294563EA1EE4EEF000DBCD35 /* IssueStatusCell.swift in Sources */,
@@ -2953,6 +2986,7 @@
 				2905AFAD1F7357C50015AE32 /* RepositoryIssuesViewController.swift in Sources */,
 				29EE1C1D1F3A33890046A54D /* RepositoryLabel.swift in Sources */,
 				29DAA7AB20202A1A0029277A /* PullRequestReviewReplySectionController.swift in Sources */,
+				BD167CA2215A7FBD0009678F /* RepoBranches.swift in Sources */,
 				29792B1D1FFB2FC6007A0C57 /* IssueManagingNavSectionController.swift in Sources */,
 				2905AFAB1F7357B40015AE32 /* RepositoryOverviewViewController.swift in Sources */,
 				29999734203135E100995FFD /* IssueMergeContextCell.swift in Sources */,
@@ -3064,6 +3098,7 @@
 				2977788820B0DAD500F2AFC2 /* ViewMarkdownViewController.swift in Sources */,
 				29CEA5CF1F84DCB3009827DB /* UIViewController+EmptyBackBar.swift in Sources */,
 				29242812210A5148001F5980 /* SpacerCell.swift in Sources */,
+				BD167CA0215A7F900009678F /* RepoBranchesViewController.swift in Sources */,
 				292CD3D81F0DC52900D3D57B /* UIViewController+IssueCommentHtmlCellNavigationDelegate.swift in Sources */,
 				297AE8801EC0D5C200B44A1F /* UIViewController+LoadingIndicator.swift in Sources */,
 				292CD3D21F0DBEC000D3D57B /* UIViewController+Safari.swift in Sources */,
@@ -3090,6 +3125,7 @@
 				293A45771F296B7E00DD1006 /* ListKitTestCase.swift in Sources */,
 				BD89007E20B8844B0026013F /* NetworkingURLPathTests.swift in Sources */,
 				BD3761B0209E032500401DFB /* BookmarkNavigationItemTests.swift in Sources */,
+				BD167C9521590E660009678F /* SwitchBranches.swift in Sources */,
 				DC5C02C51F9C6E3500E80B9F /* SearchQueryTests.swift in Sources */,
 				293A457E1F296BD500DD1006 /* API.swift in Sources */,
 				49AF91B1204B416500DFF325 /* MergeTests.swift in Sources */,

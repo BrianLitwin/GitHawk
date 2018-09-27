@@ -87,6 +87,7 @@ SearchResultSectionControllerDelegate {
         navigationItem.titleView = searchBar
 
         searchBar.resignWhenKeyboardHides()
+        search(term: "pytho")
     }
 
     override func viewWillAppear(_ animated: Bool) {

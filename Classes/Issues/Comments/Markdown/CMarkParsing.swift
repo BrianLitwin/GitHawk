@@ -375,9 +375,12 @@ func MarkdownModels(
 
     var models = [ListDiffable]()
     let elements = node.flatElements
+
+
     let count = elements.count
     for (i, el) in elements.enumerated() {
         if let model = el.model(options, lastElement: i == count - 1) {
+            print(model)
             models.append(model)
         }
     }

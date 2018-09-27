@@ -19,12 +19,20 @@ class HackScrollIndicatorInsetsCollectionView: UICollectionView {
     }
 }
 
-class RepositoryOverviewViewController: BaseListViewController<NSString>,
-BaseListViewControllerDataSource {
+class RepositoryOverviewViewController:
+BaseListViewController<NSString>,
+BaseListViewControllerDataSource,
+RepoBranchUpdateable
+{
+    
+    public func reload() {
+        feed.adapter.reloadData()
+    }
 
     private let repo: RepositoryDetails
     private let client: RepositoryClient
-    private var readme: RepositoryReadmeModel?
+    var readme: RepositoryReadmeModel?
+    private var repoBranches: RepoBranches
 
 //    lazy var _feed: Feed = { Feed(
 //        viewController: self,
@@ -37,10 +45,14 @@ BaseListViewControllerDataSource {
 //    override var feed: Feed {
 //        return _feed
 //    }
-
+    
     init(client: GithubClient, repo: RepositoryDetails) {
         self.repo = repo
         self.client = RepositoryClient(githubClient: client, owner: repo.owner, name: repo.name)
+        self.repoBranches = RepoBranches(branches: [repo.defaultBranch],
+                                         currentBranch: repo.defaultBranch
+        )
+        
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load README.", comment: "")
         )
@@ -57,6 +69,8 @@ BaseListViewControllerDataSource {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+  
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,24 +82,19 @@ BaseListViewControllerDataSource {
 
     override func fetch(page: NSString?) {
         let repo = self.repo
-//        let contentInset = feed.collectionView.contentInset
+        let branch = repoBranches.currentBranch
+//       let contentInset = feed.collectionView.contentInset
         let width = view.bounds.width - Styles.Sizes.gutter * 2
         let contentSizeCategory = UIContentSizeCategory.preferred
-
+        
         client.githubClient.client
-            .send(V3RepositoryReadmeRequest(owner: repo.owner, repo: repo.name)) { [weak self] result in
+            .send(V3RepositoryReadmeRequest(owner: repo.owner,
+                                            repo: repo.name,
+                                            branch: branch)) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.global().async {
-                    let branch: String
-                    if let items = URLComponents(url: response.data.url, resolvingAgainstBaseURL: false)?.queryItems,
-                        let index = items.index(where: { $0.name == "ref" }),
-                        let value = items[index].value {
-                        branch = value
-                    } else {
-                        branch = "master"
-                    }
-
+                    
                     let models = MarkdownModels(
                         response.data.content,
                         owner: repo.owner,
@@ -99,6 +108,7 @@ BaseListViewControllerDataSource {
                     let model = RepositoryReadmeModel(models: models)
                     DispatchQueue.main.async { [weak self] in
                         self?.readme = model
+                        self?.feed.adapter.reloadData()
                         self?.update(animated: trueUnlessReduceMotionEnabled)
                     }
                 }
@@ -129,6 +139,13 @@ BaseListViewControllerDataSource {
             layoutInsets: view.safeAreaInsets, 
             type: .readme
         )
+    }
+    
+    // MARK: RepoBranchUpdateable
+
+    func updateRepoBranch(with repoBranches: RepoBranches) {
+        self.repoBranches = repoBranches
+        fetch(page: nil)
     }
 
 }

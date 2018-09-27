@@ -13,6 +13,9 @@ import StyledTextKit
 extension StyledTextRenderer: ListDiffable {
 
     public func diffIdentifier() -> NSObjectProtocol {
+        print(self)
+        print("******************************************************************************************")
+        print("text: " + string.allText + "   " + "diffid: " + String(string.hashValue))
         return string.hashValue as NSObjectProtocol
     }
 

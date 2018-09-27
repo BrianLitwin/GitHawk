@@ -31,6 +31,7 @@ public final class StyledTextRenderer {
         scale: CGFloat = StyledTextScreenScale,
         maximumNumberOfLines: Int = 0
         ) {
+        
         self.string = string
         self.contentSizeCategory = contentSizeCategory
         self.inset = inset

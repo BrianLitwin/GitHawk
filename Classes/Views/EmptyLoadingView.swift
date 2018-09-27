@@ -27,4 +27,7 @@ final class EmptyLoadingView: UIView {
         activity.center = CGPoint(x: bounds.width/2, y: bounds.height/2)
     }
 
+    public func setColor(_ color: UIColor) {
+        activity.color = color
+    }
 }

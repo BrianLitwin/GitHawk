@@ -45,7 +45,7 @@ final class BadgeNotifications {
                 switch settings.authorizationStatus {
                 case .notDetermined, .denied:
                     callback(.error(nil))
-                case .authorized, .provisional:
+                case .authorized:
                     callback(.success((isBadgeEnabled, isLocalNotificationEnabled)))
                 }
             }

@@ -44,6 +44,8 @@ MilestoneSectionControllerDelegate {
         preferredContentSize = Styles.Sizes.contextMenuSize
         feed.collectionView.backgroundColor = Styles.Colors.menuBackgroundColor.color
         dataSource = self
+        
+        feed.activityIndicatorColor = .white
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -62,6 +64,7 @@ MilestoneSectionControllerDelegate {
         client.fetchMilestones(owner: owner, repo: repo) { [weak self] (result) in
             switch result {
             case .success(let milestones):
+                sleep(2)
                 self?.milestones = milestones
             case .error:
                 Squawk.showGenericError()
@@ -100,6 +103,6 @@ MilestoneSectionControllerDelegate {
         }
         update(animated: true)
     }
-
+    
 }
 

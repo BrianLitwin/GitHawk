@@ -26,6 +26,7 @@ final class Feed: NSObject, UIScrollViewDelegate {
     let collectionView: UICollectionView
 
     public private(set) var status: Status = .idle
+    public var activityIndicatorColor: UIColor?
     private weak var delegate: FeedDelegate?
     private let feedRefresh = FeedRefresh()
     private let managesLayout: Bool
@@ -142,5 +143,4 @@ final class Feed: NSObject, UIScrollViewDelegate {
             }
         }
     }
-
 }
