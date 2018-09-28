@@ -52,7 +52,8 @@ RepositoryBranchSectionControllerDelegate
         client.fetchRepositoryBranches(owner: owner,
                                  repo: repo,
                                  currentBranch: repoBranches.currentBranch
-        ){  [weak self] result in
+            )
+        {  [weak self] result in
             switch result {
             case .success(let repoBranches):
                 self?.repoBranches = repoBranches
@@ -69,7 +70,7 @@ RepositoryBranchSectionControllerDelegate
         
         return repoBranches.branches.map { branch in
             let value = RepositoryBranchViewModel(branch: branch,
-                                            selected: branch == selectedBranch)
+                                                  selected: branch == selectedBranch)
             
             return ListSwiftPair(value) { [weak self] in
                 let controller = RepositoryBranchSectionController()
