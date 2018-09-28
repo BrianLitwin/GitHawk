@@ -10,30 +10,27 @@ import UIKit
 import Squawk
 import IGListKit
 
-protocol RepoBranchUpdateable: class {
-    func updateRepoBranch(with repoBranches: RepoBranches)
-}
-
-final class RepoBranchesViewController: BaseListViewController2<String>,
+final class RepositoryBranchesViewController: BaseListViewController2<String>,
 BaseListViewController2DataSource,
-RepoBranchSectionControllerDelegate
+RepositoryBranchSectionControllerDelegate
 {
 
     private let owner: String
     private let repo: String
     private let client: GithubClient
-    public var repoBranches: RepoBranches
+    public var repoBranches: RepositoryBranches
     
-    init(repoBranches: RepoBranches,
+    init(repoBranches: RepositoryBranches,
          owner: String,
          repo: String,
          client: GithubClient
-        ){
+        )
+    {
         self.repoBranches = repoBranches
         self.owner = owner
         self.repo = repo
         self.client = client
-        super.init(emptyErrorMessage: "Couldn't load branches")
+        super.init(emptyErrorMessage: "Couldn't load repository branches")
         
         title = Constants.Strings.branches
         preferredContentSize = Styles.Sizes.contextMenuSize
@@ -52,18 +49,16 @@ RepoBranchSectionControllerDelegate
     }
     
     override func fetch(page: String?) {
-        client.fetchRepoBranches(owner: owner,
+        client.fetchRepositoryBranches(owner: owner,
                                  repo: repo,
                                  currentBranch: repoBranches.currentBranch
         ){  [weak self] result in
             switch result {
             case .success(let repoBranches):
-                sleep(2)
                 self?.repoBranches = repoBranches
             case .error:
-                Squawk.showGenericError()
+                Squawk.showError(message: "Couldn't fetch repository branches")
             }
-            
             self?.update(animated: true)
         }
     }
@@ -73,19 +68,19 @@ RepoBranchSectionControllerDelegate
         let selectedBranch = repoBranches.currentBranch
         
         return repoBranches.branches.map { branch in
-            let value = RepoBranchViewModel(branch: branch,
+            let value = RepositoryBranchViewModel(branch: branch,
                                             selected: branch == selectedBranch)
             
             return ListSwiftPair(value) { [weak self] in
-                let controller = RepoBranchSectionController()
+                let controller = RepositoryBranchSectionController()
                 controller.delegate = self
                 return controller
             }
         }
     }
     
-    func didSelect(value: RepoBranchViewModel) {
-        repoBranches = repoBranches.switchBranch(to: value.branch)
+    func didSelect(value: RepositoryBranchViewModel) {
+        repoBranches = repoBranches.switchCurrentBranch(to: value.branch)
         fetch(page: nil)
     }
 }

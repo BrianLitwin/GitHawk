@@ -8,6 +8,6 @@
 
 import UIKit
 
-class RepositoryBranchUpdatable: NSObject {
-
+protocol RepositoryBranchUpdatable: class {
+    func updateRepoBranch(with repoBranches: RepositoryBranches)
 }

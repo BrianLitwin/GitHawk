@@ -13,9 +13,19 @@ struct RepositoryBranches: Equatable {
     public let branches: [String]
     public let currentBranch: String
     
-    func switchBranch(to newBranch: String) -> RepositoryBranches {
-        return RepoBranches(branches: self.branches,
-                            currentBranch: newBranch
+    init(defaultBranch: String) {
+        self.branches = [defaultBranch]
+        self.currentBranch = defaultBranch
+    }
+    
+    init(branches: [String], currentBranch: String) {
+        self.branches = branches
+        self.currentBranch = currentBranch
+    }
+    
+    func switchCurrentBranch(to newBranch: String) -> RepositoryBranches {
+        return RepositoryBranches(branches: self.branches,
+                                  currentBranch: newBranch
         )
     }
     

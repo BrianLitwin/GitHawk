@@ -20,11 +20,14 @@ class HackScrollIndicatorInsetsCollectionView: UICollectionView {
 }
 
 class RepositoryOverviewViewController: BaseListViewController<NSString>,
-BaseListViewControllerDataSource {
-
+BaseListViewControllerDataSource,
+RepositoryBranchUpdatable
+{
+    
     private let repo: RepositoryDetails
     private let client: RepositoryClient
     private var readme: RepositoryReadmeModel?
+    private var repoBranches: RepositoryBranches
 
 //    lazy var _feed: Feed = { Feed(
 //        viewController: self,
@@ -41,6 +44,8 @@ BaseListViewControllerDataSource {
     init(client: GithubClient, repo: RepositoryDetails) {
         self.repo = repo
         self.client = RepositoryClient(githubClient: client, owner: repo.owner, name: repo.name)
+        self.repoBranches = RepositoryBranches(defaultBranch: repo.defaultBranch)
+        
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load README.", comment: "")
         )
@@ -71,20 +76,16 @@ BaseListViewControllerDataSource {
 //        let contentInset = feed.collectionView.contentInset
         let width = view.bounds.width - Styles.Sizes.gutter * 2
         let contentSizeCategory = UIContentSizeCategory.preferred
+        let branch = repoBranches.currentBranch
 
         client.githubClient.client
-            .send(V3RepositoryReadmeRequest(owner: repo.owner, repo: repo.name)) { [weak self] result in
+            .send(V3RepositoryReadmeRequest(owner: repo.owner,
+                                            repo: repo.name,
+                                            branch: branch)
+                ) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.global().async {
-                    let branch: String
-                    if let items = URLComponents(url: response.data.url, resolvingAgainstBaseURL: false)?.queryItems,
-                        let index = items.index(where: { $0.name == "ref" }),
-                        let value = items[index].value {
-                        branch = value
-                    } else {
-                        branch = "master"
-                    }
 
                     let models = MarkdownModels(
                         response.data.content,
@@ -99,6 +100,7 @@ BaseListViewControllerDataSource {
                     let model = RepositoryReadmeModel(models: models)
                     DispatchQueue.main.async { [weak self] in
                         self?.readme = model
+                        self?.feed.adapter.reloadData()
                         self?.update(animated: trueUnlessReduceMotionEnabled)
                     }
                 }
@@ -130,5 +132,13 @@ BaseListViewControllerDataSource {
             type: .readme
         )
     }
-
+    
+    //MARK: RepositoryBranchUpdatable
+    
+    func updateRepoBranch(with repoBranches: RepositoryBranches) {
+        guard self.repoBranches != repoBranches else { return }
+        self.repoBranches = repoBranches
+        fetch(page: nil)
+    }
+    
 }

@@ -9,19 +9,19 @@
 import UIKit
 import IGListKit
 
-protocol RepoBranchSectionControllerDelegate: class {
-    func didSelect(value: RepoBranchViewModel)
+protocol RepositoryBranchSectionControllerDelegate: class {
+    func didSelect(value: RepositoryBranchViewModel)
 }
 
-final class RepoBranchSectionController: ListSwiftSectionController<RepoBranchViewModel> {
+final class RepositoryBranchSectionController: ListSwiftSectionController<RepositoryBranchViewModel> {
     
-    public weak var delegate: RepoBranchSectionControllerDelegate?
+    public weak var delegate: RepositoryBranchSectionControllerDelegate?
     
-    override func createBinders(from value: RepoBranchViewModel) -> [ListBinder] {
+    override func createBinders(from value: RepositoryBranchViewModel) -> [ListBinder] {
         return [
             binder(
                 value,
-                cellType: ListCellType.class(RepoBranchCell.self),
+                cellType: ListCellType.class(RepositoryBranchCell.self),
                 size: {
                     return CGSize(
                         width: $0.collection.containerSize.width,
