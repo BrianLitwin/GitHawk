@@ -12,8 +12,7 @@ extension GithubClient {
     
     func fetchRepositoryBranches(owner: String,
                                  repo: String,
-                                 currentBranch: String,
-                                 completion: @escaping (Result<RepositoryBranches>)->Void
+                                 completion: @escaping (Result<([String])>)->Void
     ) {
         let query = FetchRepositoryBranchesQuery(owner: owner, name: repo)
         client.query(query, result: { $0.repository }) { result in
@@ -31,11 +30,8 @@ extension GithubClient {
                     }
                 }
             }
-    
-            let repoBranches = RepositoryBranches(branches: branches,
-                                                  currentBranch: currentBranch
-            )
-            completion(.success(repoBranches))
+
+            completion(.success(branches))
             }
         }
     }

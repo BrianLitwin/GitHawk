@@ -20,73 +20,64 @@ class HackScrollIndicatorInsetsCollectionView: UICollectionView {
 }
 
 class RepositoryOverviewViewController: BaseListViewController<NSString>,
-BaseListViewControllerDataSource,
-RepositoryBranchUpdatable
-{
+BaseListViewControllerDataSource {
     
     private let repo: RepositoryDetails
     private let client: RepositoryClient
     private var readme: RepositoryReadmeModel?
-    private var repoBranches: RepositoryBranches
-
-//    lazy var _feed: Feed = { Feed(
-//        viewController: self,
-//        delegate: self,
-//        collectionView: HackScrollIndicatorInsetsCollectionView(
-//            frame: .zero,
-//            collectionViewLayout: ListCollectionViewLayout.basic()
-//        ))
-//    }()
-//    override var feed: Feed {
-//        return _feed
-//    }
-
+    private var branch: String
+    
+    //    lazy var _feed: Feed = { Feed(
+    //        viewController: self,
+    //        delegate: self,
+    //        collectionView: HackScrollIndicatorInsetsCollectionView(
+    //            frame: .zero,
+    //            collectionViewLayout: ListCollectionViewLayout.basic()
+    //        ))
+    //    }()
+    //    override var feed: Feed {
+    //        return _feed
+    //    }
     init(client: GithubClient, repo: RepositoryDetails) {
         self.repo = repo
         self.client = RepositoryClient(githubClient: client, owner: repo.owner, name: repo.name)
-        self.repoBranches = RepositoryBranches(defaultBranch: repo.defaultBranch)
-        
+        self.branch = repo.defaultBranch
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load README.", comment: "")
         )
         self.dataSource = self
         title = NSLocalizedString("Overview", comment: "")
-//        self.feed.collectionView.contentInset = UIEdgeInsets(
-//            top: Styles.Sizes.rowSpacing,
-//            left: Styles.Sizes.gutter,
-//            bottom: Styles.Sizes.rowSpacing,
-//            right: Styles.Sizes.gutter
-//        )
+        //        self.feed.collectionView.contentInset = UIEdgeInsets(
+        //            top: Styles.Sizes.rowSpacing,
+        //            left: Styles.Sizes.gutter,
+        //            bottom: Styles.Sizes.rowSpacing,
+        //            right: Styles.Sizes.gutter
+        //        )
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         feed.collectionView.backgroundColor = .white
         makeBackBarItemEmpty()
     }
-
+    
     // MARK: Overrides
-
     override func fetch(page: NSString?) {
         let repo = self.repo
-//        let contentInset = feed.collectionView.contentInset
+        //        let contentInset = feed.collectionView.contentInset
         let width = view.bounds.width - Styles.Sizes.gutter * 2
         let contentSizeCategory = UIContentSizeCategory.preferred
-        let branch = repoBranches.currentBranch
-
+        let branch = self.branch 
+        
         client.githubClient.client
-            .send(V3RepositoryReadmeRequest(owner: repo.owner,
-                                            repo: repo.name,
-                                            branch: branch)
-                ) { [weak self] result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.global().async {
-
+            .send(V3RepositoryReadmeRequest(owner: repo.owner, repo: repo.name, branch: branch)) { [weak self] result in
+                switch result {
+                case .success(let response):
+                        
                     let models = MarkdownModels(
                         response.data.content,
                         owner: repo.owner,
@@ -103,42 +94,42 @@ RepositoryBranchUpdatable
                         self?.feed.adapter.reloadData()
                         self?.update(animated: trueUnlessReduceMotionEnabled)
                     }
+                    
+                case .failure:
+                    self?.error(animated: trueUnlessReduceMotionEnabled)
                 }
-            case .failure:
-                self?.error(animated: trueUnlessReduceMotionEnabled)
-            }
         }
     }
-
+    
     // MARK: BaseListViewControllerDataSource
-
     func headModels(listAdapter: ListAdapter) -> [ListDiffable] {
         return []
     }
-
+    
     func models(listAdapter: ListAdapter) -> [ListDiffable] {
         guard let readme = self.readme else { return [] }
         return [readme]
     }
-
+    
     func sectionController(model: Any, listAdapter: ListAdapter) -> ListSectionController {
         return RepositoryReadmeSectionController()
     }
-
+    
     func emptySectionController(listAdapter: ListAdapter) -> ListSectionController {
         return RepositoryEmptyResultsSectionController(
             topInset: 0,
-            layoutInsets: view.safeAreaInsets, 
+            layoutInsets: view.safeAreaInsets,
             type: .readme
         )
     }
     
     //MARK: RepositoryBranchUpdatable
     
-    func updateRepoBranch(with repoBranches: RepositoryBranches) {
-        guard self.repoBranches != repoBranches else { return }
-        self.repoBranches = repoBranches
+    func updateRepoBranch(to newBranch: String) {
+        guard self.branch != newBranch else { return }
+        self.branch = newBranch
         fetch(page: nil)
     }
     
 }
+

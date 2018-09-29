@@ -9,5 +9,5 @@
 import UIKit
 
 protocol RepositoryBranchUpdatable: class {
-    func updateRepoBranch(with repoBranches: RepositoryBranches)
+    func updateRepoBranch(to newBranch: String)
 }

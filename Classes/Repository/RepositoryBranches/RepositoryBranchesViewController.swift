@@ -18,15 +18,16 @@ RepositoryBranchSectionControllerDelegate
     private let owner: String
     private let repo: String
     private let client: GithubClient
-    public var repoBranches: RepositoryBranches
+    private var branches: [String] = []
+    public var branch: String
     
-    init(repoBranches: RepositoryBranches,
+    init(branch: String,
          owner: String,
          repo: String,
          client: GithubClient
         )
     {
-        self.repoBranches = repoBranches
+        self.branch = branch
         self.owner = owner
         self.repo = repo
         self.client = client
@@ -51,13 +52,12 @@ RepositoryBranchSectionControllerDelegate
     
     override func fetch(page: String?) {
         client.fetchRepositoryBranches(owner: owner,
-                                 repo: repo,
-                                 currentBranch: repoBranches.currentBranch
+                                 repo: repo
             )
         {  [weak self] result in
             switch result {
-            case .success(let repoBranches):
-                self?.repoBranches = repoBranches
+            case .success(let branches):
+                self?.branches = branches
             case .error:
                 Squawk.showError(message: "Couldn't fetch repository branches")
             }
@@ -67,11 +67,9 @@ RepositoryBranchSectionControllerDelegate
     
     func models(adapter: ListSwiftAdapter) -> [ListSwiftPair] {
         guard feed.status == .idle else { return [] }
-        let selectedBranch = repoBranches.currentBranch
-        
-        return repoBranches.branches.map { branch in
-            let value = RepositoryBranchViewModel(branch: branch,
-                                                  selected: branch == selectedBranch)
+        return branches.map {
+            let value = RepositoryBranchViewModel(branch: $0,
+                                                  selected: $0 == self.branch)
             
             return ListSwiftPair(value) { [weak self] in
                 let controller = RepositoryBranchSectionController()
@@ -82,7 +80,7 @@ RepositoryBranchSectionControllerDelegate
     }
     
     func didSelect(value: RepositoryBranchViewModel) {
-        repoBranches = repoBranches.switchCurrentBranch(to: value.branch)
+        self.branch = value.branch
         fetch(page: nil)
     }
 }

@@ -10,77 +10,74 @@ import UIKit
 import IGListKit
 
 final class RepositoryCodeDirectoryViewController: BaseListViewController<NSNumber>,
-BaseListViewControllerDataSource,
+    BaseListViewControllerDataSource,
 ListSingleSectionControllerDelegate,
 RepositoryBranchUpdatable
 {
-
+    
     private let client: GithubClient
+    private var branch: String
     private let path: FilePath
     private let repo: RepositoryDetails
     private var files = [RepositoryFile]()
-    private var repoBranches: RepositoryBranches
-
+    
     init(
         client: GithubClient,
         repo: RepositoryDetails,
-        repoBranches: RepositoryBranches,
+        branch: String,
         path: FilePath
         ) {
         self.client = client
         self.repo = repo
-        self.repoBranches = repoBranches
+        self.branch = branch
         self.path = path
-
+        
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load directory.", comment: "")
         )
-
+        
         self.dataSource = self
-
+        
         // set on init in case used by Tabman
         self.title = NSLocalizedString("Code", comment: "")
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTitle(filePath: path, target: self, action: #selector(onFileNavigationTitle(sender:)))
         makeBackBarItemEmpty()
     }
-
+    
     // MARK: Public API
-
     static func createRoot(
         client: GithubClient,
         repo: RepositoryDetails,
-        repoBranches: RepositoryBranches
+        branch: String
         ) -> RepositoryCodeDirectoryViewController {
         return RepositoryCodeDirectoryViewController(
             client: client,
             repo: repo,
-            repoBranches: repoBranches,
+            branch: branch,
             path: FilePath(components: [])
         )
     }
-
+    
     // MARK: Private API
-
     @objc func onFileNavigationTitle(sender: UIView) {
         showAlert(filePath: path, sender: sender)
     }
-
+    
     // MARK: Overrides
-
     override func fetch(page: NSNumber?) {
         client.fetchFiles(
-        owner: repo.owner,
-        repo: repo.name,
-        branch: repoBranches.currentBranch,
-        path: path.path
+            owner: repo.owner,
+            repo: repo.name,
+            branch: branch,
+            path: path.path
         ) { [weak self] (result) in
             switch result {
             case .error:
@@ -91,17 +88,16 @@ RepositoryBranchUpdatable
             }
         }
     }
-
+    
     // MARK: BaseListViewControllerDataSource
-
     func headModels(listAdapter: ListAdapter) -> [ListDiffable] {
         return []
     }
-
+    
     func models(listAdapter: ListAdapter) -> [ListDiffable] {
         return files
     }
-
+    
     func sectionController(model: Any, listAdapter: ListAdapter) -> ListSectionController {
         let controller = ListSingleSectionController(cellClass: RepositoryFileCell.self, configureBlock: { (file, cell: UICollectionViewCell) in
             guard let cell = cell as? RepositoryFileCell, let file = file as? RepositoryFile else { return }
@@ -113,7 +109,7 @@ RepositoryBranchUpdatable
         controller.selectionDelegate = self
         return controller
     }
-
+    
     func emptySectionController(listAdapter: ListAdapter) -> ListSectionController {
         return ListSingleSectionController(cellClass: LabelCell.self, configureBlock: { (_, cell: UICollectionViewCell) in
             guard let cell = cell as? LabelCell else { return }
@@ -128,63 +124,61 @@ RepositoryBranchUpdatable
             )
         })
     }
-
+    
     // MARK: ListSingleSectionControllerDelegate
-
     func didSelect(_ sectionController: ListSingleSectionController, with object: Any) {
         guard let file = object as? RepositoryFile else { return }
         let nextPath = path.appending(file.name)
-
+        
         if file.isDirectory {
             showDirectory(at: nextPath)
         } else {
             showFile(at: nextPath)
         }
     }
-
+    
 }
 
 // MARK: - RepositoryCodeDirectoryViewController (Navigation) -
-
 extension RepositoryCodeDirectoryViewController {
-
+    
     private func showDirectory(at path: FilePath) {
         let controller = RepositoryCodeDirectoryViewController(
             client: client,
             repo: repo,
-            repoBranches: repoBranches,
+            branch: branch,
             path: path
         )
-
+        
         navigationController?.pushViewController(controller, animated: trueUnlessReduceMotionEnabled)
     }
-
+    
     private func showFile(at path: FilePath) {
         let controller: UIViewController
-
+        
         if path.hasBinarySuffix {
             controller = RepositoryWebViewController(
                 repo: repo,
-                branch: repoBranches.currentBranch,
+                branch: branch,
                 path: path
             )
         } else {
             controller = RepositoryCodeBlobViewController(
                 client: client,
                 repo: repo,
-                branch: repoBranches.currentBranch,
+                branch: branch,
                 path: path
             )
         }
-
+        
         navigationController?.pushViewController(controller, animated: trueUnlessReduceMotionEnabled)
     }
     
     // MARK: RepositoryBranchUpdatable
-
-    func updateRepoBranch(with repoBranches: RepositoryBranches) {
-        guard self.repoBranches != repoBranches else { return }
-        self.repoBranches = repoBranches
+    
+    func updateRepoBranch(to newBranch: String) {
+        guard self.branch != newBranch else { return }
+        self.branch = newBranch
         fetch(page: nil)
     }
     

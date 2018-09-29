@@ -24,7 +24,7 @@ ContextMenuDelegate
     private let client: GithubClient
     private let controllers: [UIViewController]
     private var bookmarkNavController: BookmarkNavigationController? = nil
-    private var repoBranches: RepositoryBranches
+    private var branch: String
 
     var moreOptionsItem: UIBarButtonItem {
         let rightItem = UIBarButtonItem(image: UIImage(named: "bullets-hollow"), target: self, action: #selector(RepositoryViewController.onMore(sender:)))
@@ -35,7 +35,7 @@ ContextMenuDelegate
     init(client: GithubClient, repo: RepositoryDetails) {
         self.repo = repo
         self.client = client
-        self.repoBranches = RepositoryBranches(defaultBranch: repo.defaultBranch)
+        self.branch = repo.defaultBranch
         
         let bookmark = Bookmark(
             type: .repo,
@@ -55,7 +55,7 @@ ContextMenuDelegate
             RepositoryCodeDirectoryViewController.createRoot(
                 client: client,
                 repo: repo,
-                repoBranches: RepositoryBranches(defaultBranch: repo.defaultBranch)
+                branch: repo.defaultBranch
             )
         ]
         self.controllers = controllers
@@ -144,11 +144,11 @@ ContextMenuDelegate
             [weak self] action in
             guard let strongSelf = self else { return }
             let viewController =
-                RepositoryBranchesViewController(repoBranches: strongSelf.repoBranches,
+                RepositoryBranchesViewController(branch: strongSelf.branch,
                                                  owner: strongSelf.repo.owner,
                                                  repo: strongSelf.repo.name,
                                                  client: strongSelf.client
-            )
+                )
             
             strongSelf.showContextualMenu(
                 viewController,
@@ -207,10 +207,11 @@ ContextMenuDelegate
     
     func contextMenuWillDismiss(viewController: UIViewController, animated: Bool) {
         guard let repoBranchesViewController = viewController as? RepositoryBranchesViewController else { return }
-        self.repoBranches = repoBranchesViewController.repoBranches
+        let newBranch = repoBranchesViewController.branch
+        self.branch = newBranch
         controllers.forEach {
             guard let branchUpdatable = $0 as? RepositoryBranchUpdatable else { return }
-            branchUpdatable.updateRepoBranch(with: repoBranchesViewController.repoBranches)
+            branchUpdatable.updateRepoBranch(to: newBranch)
         }
     }
     
