@@ -81,6 +81,6 @@ RepositoryBranchSectionControllerDelegate
     
     func didSelect(value: RepositoryBranchViewModel) {
         self.branch = value.branch
-        fetch(page: nil)
+        update(animated: true)
     }
 }
