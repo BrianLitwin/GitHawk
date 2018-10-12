@@ -87,6 +87,7 @@ SearchResultSectionControllerDelegate {
         navigationItem.titleView = searchBar
 
         searchBar.resignWhenKeyboardHides()
+        search(term: "python")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -102,6 +103,7 @@ SearchResultSectionControllerDelegate {
             collectionView.frame = bounds
             collectionView.collectionViewLayout.invalidateForOrientationChange()
         }
+        
     }
 
     func searchBarBecomeFirstResponder() {

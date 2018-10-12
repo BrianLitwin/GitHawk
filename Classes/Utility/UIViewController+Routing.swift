@@ -21,6 +21,11 @@ extension UIViewController {
         case .username(let username): presentProfile(login: username)
         case .label(let label): presentLabels(owner: label.owner, repo: label.repo, label: label.label)
         case .commit(let commit): presentCommit(owner: commit.owner, repo: commit.repo, hash: commit.hash)
+        case .repository(let owner, let repository):
+            if let vc = self as? RepositoryOverviewViewController {
+                vc.showRepository(owner: owner, repository: repository)
+            }
+            
         default: return false
         }
         return true

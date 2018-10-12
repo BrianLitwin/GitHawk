@@ -79,12 +79,23 @@ private extension TextElement {
                 .foregroundColor: Styles.Colors.Blue.medium.color,
                 .highlight: true
             ]
-            if let shortlink = url?.shortlinkInfo {
-                attributes[MarkdownAttribute.issue] = IssueDetailsModel(
-                    owner: shortlink.owner,
-                    repo: shortlink.repo,
-                    number: shortlink.number
-                )
+            
+            if let urlString = url, let githubURL = routeInAppFromGitHubURL(url: urlString) {
+                switch githubURL {
+                case .issue(let owner, let repo, let number):
+                    attributes[MarkdownAttribute.issue] = IssueDetailsModel(
+                        owner: owner,
+                        repo: repo,
+                        number: number
+                    )
+                    
+                case .repository(let owner, let repo):
+                    attributes[MarkdownAttribute.repository] = (
+                        owner: owner,
+                        repository: repo
+                    ) 
+                }
+                
             } else {
                 attributes[MarkdownAttribute.url] = url ?? ""
             }

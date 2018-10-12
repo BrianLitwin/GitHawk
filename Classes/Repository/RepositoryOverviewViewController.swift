@@ -23,6 +23,11 @@ class RepositoryOverviewViewController: BaseListViewController<NSString>,
 BaseListViewControllerDataSource,
 RepositoryBranchUpdatable
 {
+    
+    // temp  
+    var githubClient: GithubClient {
+        return client.githubClient
+    }
 
     private let repo: RepositoryDetails
     private let client: RepositoryClient
