@@ -12,6 +12,26 @@ import cmark_gfm_swift
 import IGListKit
 import HTMLString
 
+public class LinkCatcher {
+    func add(_ link: String) {
+        if linkSet.contains(link) { return }
+        linkSet.insert(link)
+        links.append(link)
+    }
+    
+    var linkSet = Set<String>()
+    
+    var links: [String] = [] {
+        didSet {
+            if links.count > 100 {
+                for link in links {
+                    print(link)
+                }
+            }
+        }
+    }
+}
+let catcher = LinkCatcher()
 private struct CMarkOptions {
     let owner: String
     let repo: String
@@ -75,6 +95,7 @@ private extension TextElement {
                 ])
             children.build(builder, options: options, context: context)
         case .link(let children, _, let url):
+
             var attributes: [NSAttributedStringKey: Any] = [
                 .foregroundColor: Styles.Colors.Blue.medium.color,
                 .highlight: true
@@ -90,6 +111,7 @@ private extension TextElement {
                     )
                     
                 case .repository(let owner, let repo):
+                    print(url!)
                     attributes[MarkdownAttribute.repository] = (
                         owner: owner,
                         repository: repo

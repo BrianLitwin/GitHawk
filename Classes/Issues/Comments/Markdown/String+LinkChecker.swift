@@ -22,6 +22,7 @@ private let slashRegex = try! NSRegularExpression(
 
 func githubURLParts(url urlString: String) -> [String]? {
     
+    //check if the string is a github.com url
     let githubURL = gitHubRegex.matches(
         in: urlString,
         options: [],
@@ -32,6 +33,12 @@ func githubURLParts(url urlString: String) -> [String]? {
         return nil
     }
     
+    /*
+        break the string into parts separated by '/'
+        eg https:github.com/GitHawkApp/GitHawk/compare/master -->
+        ['https:', 'github.com', 'GitHawkApp', 'compare', 'master']
+    */
+    
     let matches = slashRegex.matches(
         in: urlString,
         options: [],
@@ -40,11 +47,12 @@ func githubURLParts(url urlString: String) -> [String]? {
             urlString.substring(with: $0.range(at: 0))
     }
     
-    let retMatches: [String] = matches.compactMap({$0})
-    
+    // returning null if there are any matches that == nul
     // being conservative for time being, i'm not sure what a null val would indicate here
+    let retMatches: [String] = matches.compactMap({$0})
     guard retMatches.count == matches.count else { return nil }
     
+    // first two matches should be 'https:' and 'github.com', so remove those
     let rMatches = retMatches.filter {
         $0 != "https:"
         && $0 != "github.com"
