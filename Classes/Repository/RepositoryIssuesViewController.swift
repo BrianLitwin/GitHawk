@@ -14,9 +14,15 @@ enum RepositoryIssuesType {
     case pullRequests
 }
 
+protocol SearchesIssuesForLabel {
+    func searchIssuesForLabel(_ label: String)
+}
+
 class RepositoryIssuesViewController: BaseListViewController<NSString>,
 BaseListViewControllerDataSource,
-SearchBarSectionControllerDelegate {
+SearchBarSectionControllerDelegate,
+SearchesIssuesForLabel
+{
 
     private var models = [ListDiffable]()
     private let repo: RepositoryDetails
@@ -131,5 +137,23 @@ SearchBarSectionControllerDelegate {
         }
         return "repo:\(repo.owner)/\(repo.name) \(typeQuery) \(previousSearchString)"
     }
-
+    
+    func searchIssuesForLabel(_ label: String) {
+        let s = "is:open is:issue repo:\(repo.owner)/\(repo.name) label:\(label)"
+        print(s)
+        client.searchIssues(
+            query: s,
+            nextPage: nil,
+            containerWidth: view.bounds.width
+        ) { [weak self] (result: Result<RepositoryClient.RepositoryPayload>) in
+            switch result {
+            case .error:
+                self?.error(animated: trueUnlessReduceMotionEnabled)
+            case .success(let payload):
+                self?.models = payload.models
+                self?.update(page: payload.nextPage as NSString?, animated: trueUnlessReduceMotionEnabled)
+            }
+        }
+    }
 }
+

@@ -57,6 +57,13 @@ final class RepositorySummarySectionController: ListGenericSectionController<Rep
         let controller = IssuesViewController(client: client, model: issueModel)
         viewController?.view.endEditing(false) // resign keyboard if it was triggered to become active by SearchBar 
         viewController?.navigationController?.pushViewController(controller, animated: trueUnlessReduceMotionEnabled)
+        controller.dismiss = { [weak self] label in
+            guard let navController = self?.viewController?.navigationController else { return }
+            navController.viewControllers.popLast()
+            if let vc = self?.viewController as? RepositoryIssuesViewController {
+                vc.searchIssuesForLabel(label)
+            }
+        }
     }
 
 }

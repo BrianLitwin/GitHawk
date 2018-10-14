@@ -14240,6 +14240,138 @@ public final class FetchRepositoryBranchesQuery: GraphQLQuery {
   }
 }
 
+public final class RepositoryDetailsQuery: GraphQLQuery {
+  public static let operationString =
+    "query RepositoryDetails($owner: String!, $name: String!) {\n  repository(owner: $owner, name: $name) {\n    __typename\n    defaultBranchRef {\n      __typename\n      name\n    }\n    hasIssuesEnabled\n  }\n}"
+
+  public var owner: String
+  public var name: String
+
+  public init(owner: String, name: String) {
+    self.owner = owner
+    self.name = name
+  }
+
+  public var variables: GraphQLMap? {
+    return ["owner": owner, "name": name]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes = ["Query"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField("repository", arguments: ["owner": GraphQLVariable("owner"), "name": GraphQLVariable("name")], type: .object(Repository.selections)),
+    ]
+
+    public var snapshot: Snapshot
+
+    public init(snapshot: Snapshot) {
+      self.snapshot = snapshot
+    }
+
+    public init(repository: Repository? = nil) {
+      self.init(snapshot: ["__typename": "Query", "repository": repository.flatMap { (value: Repository) -> Snapshot in value.snapshot }])
+    }
+
+    /// Lookup a given repository by the owner and repository name.
+    public var repository: Repository? {
+      get {
+        return (snapshot["repository"] as? Snapshot).flatMap { Repository(snapshot: $0) }
+      }
+      set {
+        snapshot.updateValue(newValue?.snapshot, forKey: "repository")
+      }
+    }
+
+    public struct Repository: GraphQLSelectionSet {
+      public static let possibleTypes = ["Repository"]
+
+      public static let selections: [GraphQLSelection] = [
+        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+        GraphQLField("defaultBranchRef", type: .object(DefaultBranchRef.selections)),
+        GraphQLField("hasIssuesEnabled", type: .nonNull(.scalar(Bool.self))),
+      ]
+
+      public var snapshot: Snapshot
+
+      public init(snapshot: Snapshot) {
+        self.snapshot = snapshot
+      }
+
+      public init(defaultBranchRef: DefaultBranchRef? = nil, hasIssuesEnabled: Bool) {
+        self.init(snapshot: ["__typename": "Repository", "defaultBranchRef": defaultBranchRef.flatMap { (value: DefaultBranchRef) -> Snapshot in value.snapshot }, "hasIssuesEnabled": hasIssuesEnabled])
+      }
+
+      public var __typename: String {
+        get {
+          return snapshot["__typename"]! as! String
+        }
+        set {
+          snapshot.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      /// The Ref associated with the repository's default branch.
+      public var defaultBranchRef: DefaultBranchRef? {
+        get {
+          return (snapshot["defaultBranchRef"] as? Snapshot).flatMap { DefaultBranchRef(snapshot: $0) }
+        }
+        set {
+          snapshot.updateValue(newValue?.snapshot, forKey: "defaultBranchRef")
+        }
+      }
+
+      /// Indicates if the repository has issues feature enabled.
+      public var hasIssuesEnabled: Bool {
+        get {
+          return snapshot["hasIssuesEnabled"]! as! Bool
+        }
+        set {
+          snapshot.updateValue(newValue, forKey: "hasIssuesEnabled")
+        }
+      }
+
+      public struct DefaultBranchRef: GraphQLSelectionSet {
+        public static let possibleTypes = ["Ref"]
+
+        public static let selections: [GraphQLSelection] = [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+        ]
+
+        public var snapshot: Snapshot
+
+        public init(snapshot: Snapshot) {
+          self.snapshot = snapshot
+        }
+
+        public init(name: String) {
+          self.init(snapshot: ["__typename": "Ref", "name": name])
+        }
+
+        public var __typename: String {
+          get {
+            return snapshot["__typename"]! as! String
+          }
+          set {
+            snapshot.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        /// The ref name.
+        public var name: String {
+          get {
+            return snapshot["name"]! as! String
+          }
+          set {
+            snapshot.updateValue(newValue, forKey: "name")
+          }
+        }
+      }
+    }
+  }
+}
+
 public final class RepoFileQuery: GraphQLQuery {
   public static let operationString =
     "query RepoFile($owner: String!, $name: String!, $branchAndPath: String!) {\n  repository(owner: $owner, name: $name) {\n    __typename\n    object(expression: $branchAndPath) {\n      __typename\n      ... on Blob {\n        text\n      }\n    }\n  }\n}"
