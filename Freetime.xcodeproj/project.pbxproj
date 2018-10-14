@@ -450,6 +450,7 @@
 		98F9F4031F9CD006005A0266 /* Image+Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F9F4021F9CD006005A0266 /* Image+Base64.swift */; };
 		BD3761B0209E032500401DFB /* BookmarkNavigationItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */; };
 		BD89007E20B8844B0026013F /* NetworkingURLPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */; };
+		BDB687C02173EE220007CBC4 /* UIViewController+SearchIssuesForLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB687BF2173EE220007CBC4 /* UIViewController+SearchIssuesForLabel.swift */; };
 		BDB6AA66215FBC35009BB73C /* RepositoryBranchesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA5F215FBC35009BB73C /* RepositoryBranchesViewModel.swift */; };
 		BDB6AA67215FBC35009BB73C /* RepositoryBranchUpdatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA60215FBC35009BB73C /* RepositoryBranchUpdatable.swift */; };
 		BDB6AA68215FBC35009BB73C /* RepositoryBranchesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA61215FBC35009BB73C /* RepositoryBranchesSectionController.swift */; };
@@ -1000,6 +1001,7 @@
 		B3C439BE890EECD7C0C692C5 /* Pods-Freetime.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Freetime.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Freetime/Pods-Freetime.testflight.xcconfig"; sourceTree = "<group>"; };
 		BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkNavigationItemTests.swift; sourceTree = "<group>"; };
 		BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingURLPathTests.swift; sourceTree = "<group>"; };
+		BDB687BF2173EE220007CBC4 /* UIViewController+SearchIssuesForLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SearchIssuesForLabel.swift"; sourceTree = "<group>"; };
 		BDB6AA5F215FBC35009BB73C /* RepositoryBranchesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchesViewModel.swift; sourceTree = "<group>"; };
 		BDB6AA60215FBC35009BB73C /* RepositoryBranchUpdatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchUpdatable.swift; sourceTree = "<group>"; };
 		BDB6AA61215FBC35009BB73C /* RepositoryBranchesSectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchesSectionController.swift; sourceTree = "<group>"; };
@@ -1743,6 +1745,7 @@
 				290056F2210028B20046EAE5 /* UIViewController+MenuDone.swift */,
 				29792B181FFB10A3007A0C57 /* UIViewController+MessageAutocompleteControllerLayoutDelegate.swift */,
 				292CD3D11F0DBEC000D3D57B /* UIViewController+Safari.swift */,
+				BDB687BF2173EE220007CBC4 /* UIViewController+SearchIssuesForLabel.swift */,
 				290D2A3C1F044CB20082E6CC /* UIViewController+SmartDeselection.swift */,
 				299F63E3205E1CAB0015D901 /* UIViewController+StyledTextViewCellDelegate.swift */,
 				4920F1A71F72E27200131E9D /* UIViewController+UserActivity.swift */,
@@ -2994,6 +2997,7 @@
 				290EF56A1F06A821006A2160 /* Notification+NotificationViewModel.swift in Sources */,
 				BDB6AA6A215FBC35009BB73C /* RepositoryBranchesCell.swift in Sources */,
 				29792B1B1FFB21AD007A0C57 /* AutocompleteController.swift in Sources */,
+				BDB687C02173EE220007CBC4 /* UIViewController+SearchIssuesForLabel.swift in Sources */,
 				29D548CB1FA27FE900F8E46F /* UINavigationItem+TitleSubtitle.swift in Sources */,
 				299A04A11FAE86B0003C2450 /* IssueReviewViewCommentsCell.swift in Sources */,
 				7BF2239D1F91056C006CC9A2 /* File+Filename.swift in Sources */,
