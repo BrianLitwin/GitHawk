@@ -14,9 +14,8 @@ extension UIViewController {
         print(label)
         if let o = self as? IssuesViewController {
             o.dismiss?(label)
-            // + scroll to top 
+            // scroll to top 
         }
     }
-    
 }
 

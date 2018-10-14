@@ -23,9 +23,22 @@ extension UIViewController {
             searchForLabelInRepositoryIssuesViewController(label: label.label)
             //presentLabels(owner: label.owner, repo: label.repo, label: label.label)
         case .commit(let commit): presentCommit(owner: commit.owner, repo: commit.repo, hash: commit.hash)
+        case .repository(let repoLink):
+            if let routeRepo = self as? RoutesRepositoryLink {
+                routeRepo.presentRepository(repoLink)
+            } else if let url = URL(string: repoLink.url) {
+                presentSafari(url: url)
+            }
+            
         default: return false
         }
         return true
     }
 
 }
+
+protocol RoutesRepositoryLink {
+    func presentRepository(_ repositoryLink: RepositoryLink)
+}
+
+

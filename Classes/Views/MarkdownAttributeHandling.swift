@@ -16,6 +16,7 @@ enum DetectedMarkdownAttribute {
     case label(LabelDetails)
     case commit(CommitDetails)
     case checkbox(MarkdownCheckboxModel)
+    case repository(RepositoryLink)
 }
 
 func DetectMarkdownAttribute(attributes: [NSAttributedStringKey: Any]?) -> DetectedMarkdownAttribute? {
@@ -34,6 +35,8 @@ func DetectMarkdownAttribute(attributes: [NSAttributedStringKey: Any]?) -> Detec
         return .commit(commit)
     } else if let checkbox = attributes[MarkdownAttribute.checkbox] as? MarkdownCheckboxModel {
         return .checkbox(checkbox)
+    } else if let repositoryLink = attributes[MarkdownAttribute.repository] as? RepositoryLink {
+        return .repository(repositoryLink)
     }
     return nil
 }

@@ -55,8 +55,6 @@ final class IssuesViewController:
     private var lastTimelineElement: ListDiffable?
     private var actions: IssueTextActionsView?
     
-    var dismiss: ((String)->Void)? = nil 
-
     // must fetch collaborator info from API before showing editing controls
     private var viewerIsCollaborator = false
 
