@@ -97,8 +97,12 @@ ListBindingSectionControllerSelectionDelegate {
 
     func sectionController(_ sectionController: ListBindingSectionController<ListDiffable>, didSelectItemAt index: Int, viewModel: Any) {
         guard let viewModel = viewModel as? RepositoryLabel else { return }
-        viewController?.searchForLabelInRepositoryIssuesViewController(label: viewModel.name)
-        //viewController?.presentLabels(owner: issue.owner, repo: issue.repo, label: viewModel.name)
+        let labelDetails = LabelDetails(
+            owner: issue.owner,
+            repo: issue.repo,
+            label: viewModel.name
+        )
+        viewController?.searchForLabelInIssues(label: labelDetails)
     }
 }
 

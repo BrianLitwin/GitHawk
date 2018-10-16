@@ -70,6 +70,7 @@ SearchBarSectionControllerDelegate
     // MARK: Overrides
 
     override func fetch(page: NSString?) {
+        
         client.searchIssues(
             query: fullQueryString,
             nextPage: page as String?,

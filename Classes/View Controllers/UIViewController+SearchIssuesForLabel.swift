@@ -16,30 +16,28 @@ import UIKit
 
 extension UIViewController {
 
-    func searchForLabelInRepositoryIssuesViewController(label: String) {
+    func searchForLabelInIssues(label: LabelDetails) {
         
         func fallbackRequest() {
-            //guard let url = URL(string: "https://github.com/\(owner)/\(repo)/labels/\(label)") else { return }
-            //presentSafari(url: url)
+            guard let url = URL(
+                string: "https://github.com/\(label.owner)/\(label.repo)/labels/\(label)"
+            ) else { return }
+            presentSafari(url: url)
         }
         
         guard let navController = navigationController,
             let repositoryViewController =
             navController.repositoryViewController,
             let repositoryIssuesViewController =
-            repositoryViewController.viewController(
-                for: repositoryViewController,
-                at: 1
-            ) as? RepositoryIssuesViewController else
+            repositoryViewController.repositoryIssuesViewController
+            else
         {
             fallbackRequest()
             return
         }
         
-        repositoryViewController.scrollToPage(
-            .at(index: 1),
-            animated: false
-        )
+        repositoryViewController
+            .scrollToRepositoryIssuesViewController()
         
         navController.popToViewController(
             repositoryViewController,
@@ -47,11 +45,28 @@ extension UIViewController {
         )
         
         repositoryIssuesViewController
-            .searchIssuesForLabel(label)
+            .searchIssuesForLabel(label.label)
         
     }
 }
 
+
+private extension RepositoryViewController {
+    
+    var repositoryIssuesViewController: RepositoryIssuesViewController? {
+        return viewController(
+            for: self,
+            at: 1
+        ) as? RepositoryIssuesViewController
+    }
+    
+    func scrollToRepositoryIssuesViewController() {
+        scrollToPage(
+            .at(index: 1),
+            animated: false
+        )
+    }
+}
 
 
 private extension UINavigationController {
