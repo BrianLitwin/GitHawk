@@ -13,8 +13,8 @@ protocol SearchBarCellDelegate: class {
     func didChangeSearchText(cell: SearchBarCell, query: String)
 }
 
-final class SearchBarCell: UICollectionViewCell, UISearchBarDelegate {
-
+final class SearchBarCell: UICollectionViewCell, UISearchBarDelegate, SetSearchBarTextDelegate {
+    
     weak var delegate: SearchBarCellDelegate?
 
     private let searchBar = UISearchBar(frame: .zero)
@@ -63,4 +63,12 @@ final class SearchBarCell: UICollectionViewCell, UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
+    
+    // MARK: SetSearchBarTextDelegate
+    
+    func setSearchBarText(_ text: String) {
+        searchBar.text = text
+        delegate?.didChangeSearchText(cell: self, query: text)
+    }
+    
 }

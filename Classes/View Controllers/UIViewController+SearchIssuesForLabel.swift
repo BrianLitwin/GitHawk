@@ -8,26 +8,61 @@
 
 import UIKit
 
+// one way direction of data flow 
+
+// set the text in the search bar
+// fetch(page:)
+//
+
 extension UIViewController {
 
     func searchForLabelInRepositoryIssuesViewController(label: String) {
-        if let issuesViewController = self as? IssuesViewController {
-            guard let navController = issuesViewController.navigationController,
-                navController.viewControllers.count > 1,
-                let repositoryViewController = navController
-                    .viewControllers[1] as? RepositoryViewController
-                else { return }
-            
-//            repositoryViewController
-//                .searchForLabelInRepositoryIssuesViewController(
-//                label: label
-//            )
-            
-            navController.viewControllers.popLast()
-            
-            
-            // + scroll to top 
+        
+        func fallbackRequest() {
+            //guard let url = URL(string: "https://github.com/\(owner)/\(repo)/labels/\(label)") else { return }
+            //presentSafari(url: url)
         }
+        
+        guard let navController = navigationController,
+            let repositoryViewController =
+            navController.repositoryViewController,
+            let repositoryIssuesViewController =
+            repositoryViewController.viewController(
+                for: repositoryViewController,
+                at: 1
+            ) as? RepositoryIssuesViewController else
+        {
+            fallbackRequest()
+            return
+        }
+        
+        repositoryViewController.scrollToPage(
+            .at(index: 1),
+            animated: false
+        )
+        
+        navController.popToViewController(
+            repositoryViewController,
+            animated: true
+        )
+        
+        repositoryIssuesViewController
+            .searchIssuesForLabel(label)
+        
+    }
+}
+
+
+
+private extension UINavigationController {
+    var repositoryViewController: RepositoryViewController? {
+        for vc in viewControllers {
+            if let repositoryViewController = vc as? RepositoryViewController {
+                return repositoryViewController
+            }
+        }
+        
+        return nil
     }
 }
 

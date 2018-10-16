@@ -21,7 +21,6 @@ extension UIViewController {
         case .username(let username): presentProfile(login: username)
         case .label(let label):
             searchForLabelInRepositoryIssuesViewController(label: label.label)
-            //presentLabels(owner: label.owner, repo: label.repo, label: label.label)
         case .commit(let commit): presentCommit(owner: commit.owner, repo: commit.repo, hash: commit.hash)
         default: return false
         }

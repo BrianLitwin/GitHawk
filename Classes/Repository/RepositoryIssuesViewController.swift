@@ -14,14 +14,17 @@ enum RepositoryIssuesType {
     case pullRequests
 }
 
-protocol SearchesIssuesForLabel {
-    func searchIssuesForLabel(_ label: String)
+protocol SetSearchBarTextDelegate: class {
+    func setSearchBarText(_ text: String)
+}
+
+protocol SetSearchBarTextSectionControllerDelegate: class {
+    var setSearchBarTextDelegate: SetSearchBarTextDelegate? { get }
 }
 
 class RepositoryIssuesViewController: BaseListViewController<NSString>,
 BaseListViewControllerDataSource,
-SearchBarSectionControllerDelegate,
-SearchesIssuesForLabel
+SearchBarSectionControllerDelegate
 {
 
     private var models = [ListDiffable]()
@@ -31,6 +34,7 @@ SearchesIssuesForLabel
     private let searchKey: ListDiffable = "searchKey" as ListDiffable
     private let debouncer = Debouncer()
     private var previousSearchString = "is:open "
+    private weak var setSearchBarTextSectionControllerDelegate: SetSearchBarTextSectionControllerDelegate?
 
     init(client: GithubClient, repo: RepositoryDetails, type: RepositoryIssuesType) {
         self.repo = repo
@@ -105,11 +109,13 @@ SearchesIssuesForLabel
 
     func sectionController(model: Any, listAdapter: ListAdapter) -> ListSectionController {
         if let object = model as? ListDiffable, object === searchKey {
-            return SearchBarSectionController(
+            let searchBarSectionController = SearchBarSectionController(
                 placeholder: Constants.Strings.search,
                 delegate: self,
                 query: previousSearchString
             )
+            self.setSearchBarTextSectionControllerDelegate = searchBarSectionController
+            return searchBarSectionController
         }
         return RepositorySummarySectionController(client: client.githubClient, repo: repo)
     }
@@ -139,21 +145,12 @@ SearchesIssuesForLabel
     }
     
     func searchIssuesForLabel(_ label: String) {
-        let s = "is:open is:issue repo:\(repo.owner)/\(repo.name) label:\(label)"
-        print(s)
-        client.searchIssues(
-            query: s,
-            nextPage: nil,
-            containerWidth: view.bounds.width
-        ) { [weak self] (result: Result<RepositoryClient.RepositoryPayload>) in
-            switch result {
-            case .error:
-                self?.error(animated: trueUnlessReduceMotionEnabled)
-            case .success(let payload):
-                self?.models = payload.models
-                self?.update(page: payload.nextPage as NSString?, animated: trueUnlessReduceMotionEnabled)
-            }
-        }
+        let s = "is:open label:\(label)"
+        setSearchBarTextSectionControllerDelegate?
+            .setSearchBarTextDelegate?
+            .setSearchBarText(s)
+
     }
+
 }
 

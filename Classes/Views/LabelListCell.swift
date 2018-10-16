@@ -60,6 +60,14 @@ final class LabelListCell: UICollectionViewCell, ListBindable {
         nameLabel.text = label.name
         nameLabel.textColor = color.textOverlayColor
     }
+    
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                
+            }
+        }
+    }
 
     // MARK: Accessibility
 

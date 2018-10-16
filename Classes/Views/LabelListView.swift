@@ -8,9 +8,14 @@
 
 import Foundation
 
+protocol LabelCellSearchDelegate: class {
+    func searchForLabel(_ label: String)
+}
+
 final class LabelListView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     private static var cache = [String: CGFloat]()
+    var labelCellSearchDelegate: LabelCellSearchDelegate?
     
     static func height(width: CGFloat, labels: [RepositoryLabel], cacheKey: String) -> CGFloat {
         let key = "\(cacheKey)\(width)"
@@ -39,7 +44,7 @@ final class LabelListView: UIView, UICollectionViewDataSource, UICollectionViewD
         collectionView.register(LabelListCell.self, forCellWithReuseIdentifier: LabelListCell.reuse)
         collectionView.backgroundColor = UIColor.clear
         collectionView.isScrollEnabled = false
-        collectionView.isUserInteractionEnabled = false
+        collectionView.isUserInteractionEnabled = true
         return collectionView
     }()
     

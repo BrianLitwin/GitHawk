@@ -13,12 +13,16 @@ protocol SearchBarSectionControllerDelegate: class {
     func didChangeSelection(sectionController: SearchBarSectionController, query: String)
 }
 
-final class SearchBarSectionController: ListSectionController, SearchBarCellDelegate {
-
+final class SearchBarSectionController:
+ListSectionController,
+SearchBarCellDelegate,
+SetSearchBarTextSectionControllerDelegate
+{
     public private(set) var query: String
 
     private weak var delegate: SearchBarSectionControllerDelegate?
     private let placeholder: String
+    private(set) weak var setSearchBarTextDelegate: SetSearchBarTextDelegate?
 
     init(placeholder: String, delegate: SearchBarSectionControllerDelegate, query: String = "") {
         self.delegate = delegate
@@ -38,6 +42,7 @@ final class SearchBarSectionController: ListSectionController, SearchBarCellDele
             else { fatalError("Collection context must be set, missing object, or cell incorrect type") }
         cell.delegate = self
         cell.configure(query: query, placeholder: placeholder)
+        self.setSearchBarTextDelegate = cell 
         return cell
     }
 
@@ -47,4 +52,5 @@ final class SearchBarSectionController: ListSectionController, SearchBarCellDele
         self.query = query
         self.delegate?.didChangeSelection(sectionController: self, query: query)
     }
+    
 }
