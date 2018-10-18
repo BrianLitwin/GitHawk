@@ -16,9 +16,11 @@ ListBindingSectionControllerSelectionDelegate {
     private let issue: IssueDetailsModel
     private var sizeCache = [String: CGSize]()
     private let lockedModel = Constants.Strings.locked
+    private let client: GithubClient
 
-    init(issue: IssueDetailsModel) {
+    init(issue: IssueDetailsModel, client: GithubClient) {
         self.issue = issue
+        self.client = client 
         super.init()
         minimumInteritemSpacing = Styles.Sizes.labelSpacing
         minimumLineSpacing = Styles.Sizes.labelSpacing
@@ -97,7 +99,14 @@ ListBindingSectionControllerSelectionDelegate {
 
     func sectionController(_ sectionController: ListBindingSectionController<ListDiffable>, didSelectItemAt index: Int, viewModel: Any) {
         guard let viewModel = viewModel as? RepositoryLabel else { return }
-        viewController?.presentLabels(owner: issue.owner, repo: issue.repo, label: viewModel.name)
+        
+        let labelDetails = LabelDetails(
+            client: client,
+            owner: issue.owner,
+            repo: issue.repo,
+            label: viewModel.name)
+        
+        viewController?.presentLabels(label: labelDetails)
     }
 
 }

@@ -18,6 +18,7 @@ final class IssueLabeledModel: ListDiffable {
         case removed
     }
 
+    let client: GithubClient
     let id: String
     let actor: String
     let title: String
@@ -27,6 +28,7 @@ final class IssueLabeledModel: ListDiffable {
     let string: StyledTextRenderer
 
     init(
+        client: GithubClient,
         id: String,
         actor: String,
         title: String,
@@ -38,6 +40,7 @@ final class IssueLabeledModel: ListDiffable {
         contentSizeCategory: UIContentSizeCategory,
         width: CGFloat
         ) {
+        self.client = client
         self.id = id
         self.actor = actor
         self.title = title
@@ -68,7 +71,12 @@ final class IssueLabeledModel: ListDiffable {
                 .backgroundColor: labelColor,
                 .foregroundColor: labelColor.textOverlayColor ?? .black,
                 .baselineOffset: 1, // offset for better rounded background colors
-                MarkdownAttribute.label: LabelDetails(owner: repoOwner, repo: repoName, label: title)
+                MarkdownAttribute.label: LabelDetails(
+                    client: client,
+                    owner: repoOwner,
+                    repo: repoName,
+                    label: title
+                )
                 ]
             )))
             .restore()
