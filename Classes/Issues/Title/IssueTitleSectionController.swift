@@ -8,13 +8,20 @@
 
 import UIKit
 import IGListKit
+import GitHubAPI
+
+protocol IssueTitleSectionControllerDelegate: class {
+    func sendEditTitleRequest(title: String)
+}
 
 final class IssueTitleSectionController: ListSectionController {
 
     var object: IssueTitleModel?
+    weak var delegate: IssueTitleSectionControllerDelegate?
 
-    override init() {
+    init(delegate: IssueTitleSectionControllerDelegate) {
         super.init()
+        self.delegate = delegate
         inset = UIEdgeInsets(top: Styles.Sizes.rowSpacing, left: 0, bottom: 0, right: 0)
     }
 
@@ -35,6 +42,12 @@ final class IssueTitleSectionController: ListSectionController {
             else { fatalError("Collection context must be set, missing object, or cell incorrect type") }
         cell.set(renderer: object.string)
         return cell
+    }
+    
+    override func didSelectItem(at index: Int) {
+        guard let object = self.object else { return }
+        let title = "Update Date in Workout History after changing it in workout"
+        delegate?.sendEditTitleRequest(title: title)
     }
 
 }

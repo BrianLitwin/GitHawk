@@ -34,8 +34,9 @@ final class IssuesViewController: MessageViewController,
     IssueCommentSectionControllerDelegate,
     IssueTextActionsViewSendDelegate,
     EmptyViewDelegate,
-    MessageTextViewListener {
-
+    MessageTextViewListener,
+    IssueTitleSectionControllerDelegate
+{
     private let client: GithubClient
     private let model: IssueDetailsModel
     private let addCommentClient: AddCommentClient
@@ -402,7 +403,7 @@ final class IssuesViewController: MessageViewController,
         }
         // END metadata collection
 
-        objects.append(IssueTitleModel(string: current.title))
+        objects.append(IssueTitleModel(string: current.title, viewerCanUpdate: current.viewerCanUpdate))
         objects += metadata
 
         if let targetBranch = current.targetBranch {
@@ -450,7 +451,7 @@ final class IssuesViewController: MessageViewController,
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
         // header and metadata
-        case is IssueTitleModel: return IssueTitleSectionController()
+        case is IssueTitleModel: return IssueTitleSectionController(delegate: self)
         case is IssueLabelsModel: return IssueLabelsSectionController(issue: model)
         case is IssueAssigneesModel: return IssueAssigneesSectionController()
         case is Milestone: return IssueMilestoneSectionController(issueModel: model)
@@ -631,5 +632,21 @@ final class IssuesViewController: MessageViewController,
 
     func didChangeSelection(textView: MessageTextView) {}
     func willChangeRange(textView: MessageTextView, to range: NSRange) {}
-
+    
+    //MARK: IssueTitleSectionControllerDelegate
+    
+    //add new title
+    func sendEditTitleRequest(title: String) {
+        let request = V3EditIssueTitleRequest(
+            owner: model.owner,
+            repo: model.repo,
+            issueNumber: model.number,
+            title: title
+        )
+        
+        client.client.send(request) { result in
+            print(result)
+        }
+    }
+    
 }

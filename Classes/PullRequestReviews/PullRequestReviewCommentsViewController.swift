@@ -11,13 +11,16 @@ import IGListKit
 import MessageViewController
 import StyledTextKit
 import Squawk
+import GitHubAPI
 
 final class PullRequestReviewCommentsViewController: MessageViewController,
     ListAdapterDataSource,
     FeedDelegate,
     PullRequestReviewReplySectionControllerDelegate,
     EmptyViewDelegate,
-    IssueTextActionsViewSendDelegate {
+    IssueTextActionsViewSendDelegate,
+    IssueTitleSectionControllerDelegate
+{
 
     private let model: IssueDetailsModel
     private let client: GithubClient
@@ -153,7 +156,7 @@ final class PullRequestReviewCommentsViewController: MessageViewController,
 
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
-        case is StyledTextRenderer: return IssueTitleSectionController()
+        case is StyledTextRenderer: return IssueTitleSectionController(delegate: self)
         case is IssueCommentModel: return IssueCommentSectionController(
             model: self.model,
             client: client,
@@ -221,5 +224,20 @@ final class PullRequestReviewCommentsViewController: MessageViewController,
             }
         }
     }
+    
+    // MARK: IssueTitleSectionControllerDelegate
 
+    func sendEditTitleRequest(title: String) {
+        let request = V3EditIssueTitleRequest(
+            owner: model.owner,
+            repo: model.repo,
+            issueNumber: model.number,
+            title: title
+        )
+        
+        client.client.send(request) { result in
+            print(result)
+        }
+    }
+    
 }

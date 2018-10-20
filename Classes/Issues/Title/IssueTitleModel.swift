@@ -13,9 +13,12 @@ import StyledTextKit
 final class IssueTitleModel: ListDiffable {
 
     let string: StyledTextRenderer
+    let viewerCanUpdate: Bool
 
-    init(string: StyledTextRenderer) {
+    init(string: StyledTextRenderer, viewerCanUpdate: Bool
+    ) {
         self.string = string
+        self.viewerCanUpdate = viewerCanUpdate
     }
 
     // MARK: ListDiffable
