@@ -87,6 +87,7 @@ class SearchViewController: UIViewController,
         searchBar.searchBarStyle = .minimal
         navigationItem.titleView = searchBar
 
+        search(term: "focus ios")
         searchBar.resignWhenKeyboardHides()
     }
 

@@ -90,6 +90,8 @@ private extension TextElement {
             }
             builder.add(attributes: attributes)
             children.build(builder, options: options, context: CMarkContext(inLink: true))
+            print(url!)
+            
         case .mention(let login):
             builder.add(text: "@\(login)", traits: .traitBold, attributes: [MarkdownAttribute.username: login])
         case .checkbox(let checked, let originalRange):
