@@ -11,7 +11,7 @@ import ContextMenu
 import GitHubAPI
 
 final class IssueManagingContextController: NSObject, ContextMenuDelegate {
-
+    
     // Int with lowers-highest permissions to do rank comparisons
     enum Permissions: Int {
         case none
@@ -47,13 +47,13 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
     }
     let client: GithubClient
     weak var viewController: UIViewController?
+    weak var editIssueTitleDelegate: EditIssueTitleViewControllerDelegate?
 
     init(model: IssueDetailsModel, client: GithubClient) {
         let button = IssueManageButton()
         manageButton = button
         self.client = client
         self.model = model
-
         super.init()
 
         button.isHidden = true
@@ -78,6 +78,7 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
         case lock
         case reopen
         case close
+        case editTitle
     }
 
     var actions: [Action] {
@@ -91,6 +92,7 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
             if result.pullRequest {
                 actions.append(.reviewers)
             }
+            actions.append(.editTitle)
             if result.labels.locked {
                 actions.append(.unlock)
             } else {
@@ -138,6 +140,9 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
         case .close:
             title = Constants.Strings.close
             iconName = "x"
+        case .editTitle:
+            title = NSLocalizedString("Edit Title", comment: "")
+            iconName = "pencil"
         }
 
         // Lock always has the divider above it assuming you're a collaborator.
@@ -180,6 +185,7 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
             case .lock: strongSelf.lock(true)
             case .reopen: strongSelf.close(false)
             case .close: strongSelf.close(true)
+            case .editTitle: strongSelf.presentNewEditTitleController()
             }
         }
     }
@@ -248,6 +254,16 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
             client: client,
             owner: model.owner,
             repo: model.repo
+        )
+    }
+    
+    func presentNewEditTitleController() {
+        guard let viewController = self.viewController else { return }
+        let controller = EditIssueTitleViewController(delegate: editIssueTitleDelegate, title: "title")
+        ContextMenu.shared.show(
+            sourceViewController: viewController,
+            viewController: controller,
+            delegate: self
         )
     }
 
@@ -344,4 +360,88 @@ final class IssueManagingContextController: NSObject, ContextMenuDelegate {
 
     func contextMenuDidDismiss(viewController: UIViewController, animated: Bool) {}
 
+}
+
+
+protocol EditIssueTitleViewControllerDelegate: class {
+    func sendUpdateTitleRequest(title: String, completion: @escaping ()-> Void)
+}
+
+
+class EditIssueTitleViewController: UIViewController {
+    
+    private let issueTitle: String 
+    private let textView = UITextView()
+    private weak var delegate: EditIssueTitleViewControllerDelegate?
+    
+    init(delegate: EditIssueTitleViewControllerDelegate?, title: String) {
+        self.delegate = delegate
+        self.issueTitle = "A Big old  long title for a big old issue A Big old long title of A Big old long title of A Big old long title of A Big old long title"
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "Edit"
+        
+        view.addSubview(textView)
+        textView.text = issueTitle
+        
+        textView.layer.borderColor = UIColor.orange.cgColor
+        textView.layer.borderWidth = 1
+        textView.contentInset = UIEdgeInsets(
+            top: 16,
+            left: 8,
+            bottom: 16,
+            right: 8
+        )
+        
+        preferredContentSize = CGSize(width: 200, height: 200)
+        textView.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: NSLocalizedString("Save", comment: ""),
+            style: .plain,
+            target: self,
+            action: #selector(onMenuSave)
+        )
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: Constants.Strings.cancel,
+            style: .plain,
+            target: self,
+            action: #selector(onMenuCancel)
+        )
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        textView.becomeFirstResponder()
+    }
+    
+    func dismissSelf() {
+        dismiss(animated: true)
+    }
+    
+    
+    @objc func onMenuSave() {
+        
+        guard textView.text != issueTitle else {
+            dismiss(animated: true)
+            return
+        }
+        
+        setRightBarItemSpinning()
+        delegate?.sendUpdateTitleRequest(title: textView.text) { [weak self] in
+            self?.dismiss(animated: true)
+        }
+    }
+    
+    @objc func onMenuCancel() {
+        dismiss(animated: true)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }

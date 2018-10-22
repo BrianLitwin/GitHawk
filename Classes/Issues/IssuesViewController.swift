@@ -35,7 +35,8 @@ final class IssuesViewController: MessageViewController,
     IssueTextActionsViewSendDelegate,
     EmptyViewDelegate,
     MessageTextViewListener,
-    IssueTitleSectionControllerDelegate
+    EditIssueTitleViewControllerDelegate
+    
 {
     private let client: GithubClient
     private let model: IssueDetailsModel
@@ -133,6 +134,9 @@ final class IssuesViewController: MessageViewController,
         cacheKey = "issue.\(model.owner).\(model.repo).\(model.number)"
 
         manageController.viewController = self
+        
+        //this is probably not the right way to do this 
+        manageController.editIssueTitleDelegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -451,7 +455,7 @@ final class IssuesViewController: MessageViewController,
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
         // header and metadata
-        case is IssueTitleModel: return IssueTitleSectionController(delegate: self)
+        case is IssueTitleModel: return IssueTitleSectionController()
         case is IssueLabelsModel: return IssueLabelsSectionController(issue: model)
         case is IssueAssigneesModel: return IssueAssigneesSectionController()
         case is Milestone: return IssueMilestoneSectionController(issueModel: model)
@@ -633,10 +637,7 @@ final class IssuesViewController: MessageViewController,
     func didChangeSelection(textView: MessageTextView) {}
     func willChangeRange(textView: MessageTextView, to range: NSRange) {}
     
-    //MARK: IssueTitleSectionControllerDelegate
-    
-    //add new title
-    func sendEditTitleRequest(title: String) {
+    func sendUpdateTitleRequest(title: String, completion: @escaping ()-> Void) {
         let request = V3EditIssueTitleRequest(
             owner: model.owner,
             repo: model.repo,
@@ -644,8 +645,20 @@ final class IssuesViewController: MessageViewController,
             title: title
         )
         
-        client.client.send(request) { result in
+        client.client.send(request) { [weak self] result in
             print(result)
+            guard let strongSelf = self else { return }
+            
+            switch result {
+            case .success:
+                
+                break
+                
+            case .failure(let error):
+                break
+            }
+            
+            completion()
         }
     }
     

@@ -18,8 +18,7 @@ final class PullRequestReviewCommentsViewController: MessageViewController,
     FeedDelegate,
     PullRequestReviewReplySectionControllerDelegate,
     EmptyViewDelegate,
-    IssueTextActionsViewSendDelegate,
-    IssueTitleSectionControllerDelegate
+    IssueTextActionsViewSendDelegate
 {
 
     private let model: IssueDetailsModel
@@ -156,7 +155,7 @@ final class PullRequestReviewCommentsViewController: MessageViewController,
 
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
-        case is StyledTextRenderer: return IssueTitleSectionController(delegate: self)
+        case is StyledTextRenderer: return IssueTitleSectionController()
         case is IssueCommentModel: return IssueCommentSectionController(
             model: self.model,
             client: client,
