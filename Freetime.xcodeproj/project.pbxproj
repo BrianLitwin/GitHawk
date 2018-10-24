@@ -459,6 +459,9 @@
 		BD3761B0209E032500401DFB /* BookmarkNavigationItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */; };
 		BD67495C217A47BC00E8E4FD /* UIViewController+PresentLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD67495B217A47BC00E8E4FD /* UIViewController+PresentLabels.swift */; };
 		BD89007E20B8844B0026013F /* NetworkingURLPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */; };
+		BDA8E63A217FF3CC0061426E /* RepositoryURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA8E639217FF3CC0061426E /* RepositoryURLTests.swift */; };
+		BDA8E63C217FF4810061426E /* String+RepositoryLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA8E63B217FF4810061426E /* String+RepositoryLink.swift */; };
+		BDA8E63E217FF5DF0061426E /* RepositoryLinkDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA8E63D217FF5DF0061426E /* RepositoryLinkDetail.swift */; };
 		BDB6AA66215FBC35009BB73C /* RepositoryBranchesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA5F215FBC35009BB73C /* RepositoryBranchesViewModel.swift */; };
 		BDB6AA67215FBC35009BB73C /* RepositoryBranchUpdatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA60215FBC35009BB73C /* RepositoryBranchUpdatable.swift */; };
 		BDB6AA68215FBC35009BB73C /* RepositoryBranchesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6AA61215FBC35009BB73C /* RepositoryBranchesSectionController.swift */; };
@@ -1018,6 +1021,9 @@
 		BD3761AF209E032500401DFB /* BookmarkNavigationItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkNavigationItemTests.swift; sourceTree = "<group>"; };
 		BD67495B217A47BC00E8E4FD /* UIViewController+PresentLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+PresentLabels.swift"; sourceTree = "<group>"; };
 		BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingURLPathTests.swift; sourceTree = "<group>"; };
+		BDA8E639217FF3CC0061426E /* RepositoryURLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryURLTests.swift; sourceTree = "<group>"; };
+		BDA8E63B217FF4810061426E /* String+RepositoryLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+RepositoryLink.swift"; sourceTree = "<group>"; };
+		BDA8E63D217FF5DF0061426E /* RepositoryLinkDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryLinkDetail.swift; sourceTree = "<group>"; };
 		BDB6AA5F215FBC35009BB73C /* RepositoryBranchesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchesViewModel.swift; sourceTree = "<group>"; };
 		BDB6AA60215FBC35009BB73C /* RepositoryBranchUpdatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchUpdatable.swift; sourceTree = "<group>"; };
 		BDB6AA61215FBC35009BB73C /* RepositoryBranchesSectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryBranchesSectionController.swift; sourceTree = "<group>"; };
@@ -1538,6 +1544,7 @@
 				29351EA12079663800FF8C17 /* String+Shortlink.swift */,
 				29351EA52079791800FF8C17 /* String+StripHTMLComments.swift */,
 				2965F36F2071508C003CC92F /* StyledTextBuilder+Checkbox.swift */,
+				BDA8E63B217FF4810061426E /* String+RepositoryLink.swift */,
 				2965F37120715161003CC92F /* StyledTextBuilder+NewBase.swift */,
 				29921BCB1EF624D400C1E848 /* UIFont+MutableTraits.swift */,
 				2977788720B0DAD500F2AFC2 /* ViewMarkdownViewController.swift */,
@@ -1621,6 +1628,7 @@
 				29C295091EC7AFA500D46CD2 /* ListTestKit.swift */,
 				2977D8BE215AE12D0073F737 /* LocalNotificationCacheTests.swift */,
 				49AF91B0204B416500DFF325 /* MergeTests.swift */,
+				BDA8E639217FF3CC0061426E /* RepositoryURLTests.swift */,
 				DC60C6CC1F98344B00241271 /* Mocks */,
 				BD89007D20B8844B0026013F /* NetworkingURLPathTests.swift */,
 				49D028FF1F91D90C00E39094 /* ReactionTests.swift */,
@@ -2121,6 +2129,7 @@
 				29EDFE831F661776005BCCEB /* RepositoryReadmeSectionController.swift */,
 				986B87371F2CB29700AAB55C /* RepositorySummaryCell.swift */,
 				986B87351F2CB28C00AAB55C /* RepositorySummarySectionController.swift */,
+				BDA8E63D217FF5DF0061426E /* RepositoryLinkDetail.swift */,
 				2905AFAE1F7357FA0015AE32 /* RepositoryViewController.swift */,
 				BDB6AA5D215FBC35009BB73C /* RepositoryBranches */,
 			);
@@ -2870,6 +2879,7 @@
 				292FCAF61EDFCC510026635E /* IssueCommentCodeBlockCell.swift in Sources */,
 				292FCAF71EDFCC510026635E /* IssueCommentCodeBlockModel.swift in Sources */,
 				292FCAF91EDFCC510026635E /* IssueCommentDetailCell.swift in Sources */,
+				BDA8E63E217FF5DF0061426E /* RepositoryLinkDetail.swift in Sources */,
 				DC3238931F9BA29D007DD924 /* SearchQuery.swift in Sources */,
 				2967DC56211751CB00FD3683 /* UIContentSizeCategory+Preferred.swift in Sources */,
 				7BBFEE5B1F8A8A0400C68E47 /* SearchBarSectionController.swift in Sources */,
@@ -3017,6 +3027,7 @@
 				291929491F3EAD2E0012067B /* IssueViewFilesSectionController.swift in Sources */,
 				292FCB101EDFCC510026635E /* IssueViewModels.swift in Sources */,
 				2963A93B1EE25F6F0066509C /* LabelableFields+IssueLabelModel.swift in Sources */,
+				BDA8E63C217FF4810061426E /* String+RepositoryLink.swift in Sources */,
 				29B205F8217B7E6F00E4DD9F /* PathHistoryViewModel.swift in Sources */,
 				98835BD21F1A158D005BA24F /* LabelCell.swift in Sources */,
 				29C8F9B5208C081D0075931C /* LabelSectionController.swift in Sources */,
@@ -3228,6 +3239,7 @@
 				293A45761F296B7E00DD1006 /* IssueTests.swift in Sources */,
 				49D029001F91D90C00E39094 /* ReactionTests.swift in Sources */,
 				DC60C6CE1F98346400241271 /* MockSearchEmptyViewDelegate.swift in Sources */,
+				BDA8E63A217FF3CC0061426E /* RepositoryURLTests.swift in Sources */,
 				DC60C6CB1F98341900241271 /* SearchEmptyViewTests.swift in Sources */,
 				293A45771F296B7E00DD1006 /* ListKitTestCase.swift in Sources */,
 				BD89007E20B8844B0026013F /* NetworkingURLPathTests.swift in Sources */,

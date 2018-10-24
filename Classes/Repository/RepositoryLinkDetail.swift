@@ -6,25 +6,11 @@
 //  Copyright © 2018 Ryan Nystrom. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-class RepositoryLinkDetail: UINavigationController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+// for when we catch a repository link in markdown and want to route to it in-app
+struct RepositoryLinkDetail {
+    let owner: String
+    let name: String
+    let url: String // keep as a fallback in case showing repo in GitHawk fails
 }

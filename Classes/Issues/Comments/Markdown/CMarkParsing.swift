@@ -85,6 +85,12 @@ private extension TextElement {
                     repo: shortlink.repo,
                     number: shortlink.number
                 )
+            } else if let repoLink = url?.repositoryLink {
+                attributes[MarkdownAttribute.repository] = RepositoryLinkDetail(
+                    owner: repoLink.owner,
+                    name: repoLink.name,
+                    url: url ?? ""
+                )
             } else {
                 attributes[MarkdownAttribute.url] = url ?? ""
             }

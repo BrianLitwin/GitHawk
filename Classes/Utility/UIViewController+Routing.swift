@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol RepositoryPresenterDelegate {
+    func present(repository: RepositoryLinkDetail)
+}
+
 extension UIViewController {
 
     @discardableResult
@@ -20,6 +24,13 @@ extension UIViewController {
             }
         case .username(let username): presentProfile(login: username)
         case .commit(let commit): presentCommit(owner: commit.owner, repo: commit.repo, hash: commit.hash)
+        case .repository(let repo):
+            if let presenter = self as? RepositoryPresenterDelegate {
+                presenter.present(repository: repo)
+            } else if let url = URL(string: repo.url) {
+                presentSafari(url: url)
+            }
+ 
         default: return false
         }
         return true

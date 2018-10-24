@@ -7,27 +7,43 @@
 //
 
 import XCTest
+@testable import Freetime
 
 class RepositoryURLTests: XCTestCase {
-
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    var url: String!
+    var result: (owner: String, name: String)? {
+        guard let repo = url.repositoryLink else { return nil }
+        return (repo.owner, repo.name)
     }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    func test_repositoryURL_positiveMatches() {
+        
+        url = "https://github.com/GitHawkApp/GitHawk"
+        XCTAssertEqual(result!.owner, "GitHawkApp")
+        XCTAssertEqual(result!.name, "GitHawk")
+        
+        url = "https://github.com/GitHawkApp/GitHawk/"
+        XCTAssertEqual(result!.owner, "GitHawkApp")
+        XCTAssertEqual(result!.name, "GitHawk")
+        
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func test_repositoryURL_negativeMatches() {
+        
+        url = "https://github.com/GitHawkApp"
+        XCTAssertNil(result)
+        
+        url = "https://github.com/GitHawkApp/"
+        XCTAssertNil(result)
+        
+        url = "https://github.com/GitHawkApp/GitHawk/issues"
+        XCTAssertNil(result)
+        
+        url = "https://github.com/GitHawkApp/GitHawk/issues/45"
+        XCTAssertNil(result)
+        
+        url = "https://developer.github.com/v4/guides/"
+        XCTAssertNil(result)
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

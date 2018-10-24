@@ -19,11 +19,15 @@ PageboyViewControllerDataSource,
 NewIssueTableViewControllerDelegate,
 ContextMenuDelegate {
 
-    private let repo: RepositoryDetails
+    private var repo: RepositoryDetails
     private let client: GithubClient
-    private let controllers: [UIViewController]
+    private var controllers: [UIViewController]
     private var bookmarkNavController: BookmarkNavigationController?
     public private(set) var branch: String
+    
+    init(client: GithubClient, repoLinkDetails: Repos) {
+        
+    }
 
     init(client: GithubClient, repo: RepositoryDetails) {
         self.repo = repo

@@ -6,25 +6,19 @@
 //  Copyright © 2018 Ryan Nystrom. All rights reserved.
 //
 
-import UIKit
+import Foundation 
 
-class String_RepositoryLink: UINavigationController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+private let gitHubRepoRegex = try! NSRegularExpression (
+    pattern: "https:\\/\\/github.com\\/([^/]+)\\/([^/]+)\\/?$",
+    options: []
+)
+extension String {
+    var repositoryLink: (owner: String, name: String)? {
+        guard let match = gitHubRepoRegex.firstMatch(in: self, options: [], range: nsrange),
+            match.numberOfRanges > 1,
+            let ownerSubstring = substring(with: match.range(at: 1)),
+            let repoSubstring = substring(with: match.range(at: 2))
+            else { return nil }
+        return (ownerSubstring, repoSubstring)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

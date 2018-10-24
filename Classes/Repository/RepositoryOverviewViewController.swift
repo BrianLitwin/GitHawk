@@ -22,8 +22,9 @@ class HackScrollIndicatorInsetsCollectionView: UICollectionView {
 
 class RepositoryOverviewViewController: BaseListViewController<NSString>,
 BaseListViewControllerDataSource,
-RepositoryBranchUpdatable {
-
+RepositoryBranchUpdatable,
+RepositoryPresenterDelegate
+{
     private let repo: RepositoryDetails
     private let client: RepositoryClient
     private var readme: RepositoryReadmeModel?
@@ -116,6 +117,58 @@ RepositoryBranchUpdatable {
         guard self.branch != newBranch else { return }
         self.branch = newBranch
         fetch(page: nil)
+    }
+
+    // MARK: RepositoryPresenterDelegate
+    
+    func present(repository: RepositoryLinkDetail) {
+
+        
+        let query = RepositoryDetailsQuery(
+            owner: repository.owner,
+            name: repository.name
+        )
+        
+        client.githubClient.client.query(query, result: { $0 }) { [weak self] result in
+            guard let strongSelf = self else { return }
+            
+            func presentWithSafari() {
+                if let url = URL(string: repository.url) {
+                    strongSelf.presentSafari(url: url)
+                }
+            }
+            
+            switch result {
+            case .failure(let error):
+                presentWithSafari()
+                
+            case .success(let data):
+                
+                if let repoResult = data.repository {
+                    let repo = RepositoryDetails(
+                        owner: repository.owner,
+                        name: repository.name,
+                        defaultBranch: repoResult.defaultBranchRef?.name ?? "master",
+                        hasIssuesEnabled: repoResult.hasIssuesEnabled
+                    )
+                    
+                    let repositoryViewController = RepositoryViewController(
+                        client: strongSelf.client.githubClient,
+                        repo: repo
+                    )
+                    
+                    strongSelf.navigationController?.pushViewController(
+                        repositoryViewController,
+                        animated: false
+                    )
+                } else {
+                    presentWithSafari()
+                }
+            }
+            
+            loadingViewController.dismiss(animated: false)
+        }
+        
     }
 
 }
