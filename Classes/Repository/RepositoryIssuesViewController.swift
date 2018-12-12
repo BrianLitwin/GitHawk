@@ -20,7 +20,8 @@ final class RepositoryIssuesViewController: BaseListViewController<String>,
     BaseListViewControllerEmptyDataSource,
     BaseListViewControllerHeaderDataSource,
     SearchBarSectionControllerDelegate,
-IndicatorInfoProvider {
+IndicatorInfoProvider,
+LabelListViewTapDelegate {
 
     private var models = [RepositoryIssueSummaryModel]()
     private let owner: String
@@ -123,7 +124,8 @@ IndicatorInfoProvider {
                 RepositorySummarySectionController(
                     client: client.githubClient,
                     owner: owner,
-                    repo: repo
+                    repo: repo,
+                    labelTapDelegate: self
                 )
             })
         }
@@ -160,4 +162,10 @@ IndicatorInfoProvider {
         return IndicatorInfo(title: title)
     }
 
+    // MARK: LabelListViewTapDelegate
+    
+    func didTap(label: String) {
+        print(label)
+    }
+    
 }

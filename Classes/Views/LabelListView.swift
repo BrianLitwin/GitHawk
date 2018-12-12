@@ -7,6 +7,11 @@
 //
 
 import Foundation
+import SnapKit
+
+protocol LabelListViewTapDelegate: class {
+    func didTap(label: String)
+}
 
 final class LabelListView: UIView,
 UICollectionViewDataSource,
@@ -14,6 +19,17 @@ UICollectionViewDelegate,
 UICollectionViewDelegateFlowLayout {
 
     private static var cache = [String: CGFloat]()
+    private weak var tapDelegate: LabelListViewTapDelegate?
+    static func width(labels: [RepositoryLabel]) -> CGFloat {
+        let key = labels.reduce("width:", {$0 + $1.name})
+        if let cachedWidth = cache[key] {
+            return cachedWidth
+        }
+        let interitemSpacing = labels.count > 1 ? CGFloat(labels.count - 1) * Styles.Sizes.labelSpacing : 0.0
+        let width = labels.reduce(0, { $0 + LabelListCell.size($1.name).width }) + interitemSpacing
+        LabelListView.cache[key] = width
+        return width
+    }
 
     static func height(width: CGFloat, labels: [RepositoryLabel], cacheKey: String) -> CGFloat {
         let key = "\(cacheKey)\(width)"
@@ -42,7 +58,6 @@ UICollectionViewDelegateFlowLayout {
         collectionView.register(LabelListCell.self, forCellWithReuseIdentifier: LabelListCell.reuse)
         collectionView.backgroundColor = UIColor.clear
         collectionView.isScrollEnabled = false
-        collectionView.isUserInteractionEnabled = false
         return collectionView
     }()
 
@@ -60,7 +75,13 @@ UICollectionViewDelegateFlowLayout {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        collectionView.frame = bounds
+        let width = min(LabelListView.width(labels: labels), frame.width)
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(snp.top)
+            make.bottom.equalTo(snp.bottom)
+            make.leading.equalTo(snp.leading)
+            make.width.equalTo(width)
+        }
     }
 
     // MARK: UICollectionViewDataSource
@@ -80,11 +101,18 @@ UICollectionViewDelegateFlowLayout {
         let label = labels[indexPath.row]
         return LabelListCell.size(label.name)
     }
+    
+    //MARK: UICollectionViewDelegate
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        tapDelegate?.didTap(label: labels[indexPath.row].name)
+    }
 
     // MARK: Public API
 
-    func configure(labels: [RepositoryLabel]) {
+    func configure(labels: [RepositoryLabel], tapDelegate: LabelListViewTapDelegate?) {
         self.labels = labels
+        self.tapDelegate = tapDelegate
         collectionView.reloadData()
     }
 }
