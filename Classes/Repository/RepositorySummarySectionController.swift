@@ -13,11 +13,13 @@ final class RepositorySummarySectionController: ListSwiftSectionController<Repos
     private let client: GithubClient
     private let owner: String
     private let repo: String
+    private weak var labelListViewDelegate: LabelListViewDelegate?
 
-    init(client: GithubClient, owner: String, repo: String) {
+    init(client: GithubClient, owner: String, repo: String, labelListViewDelegate: LabelListViewDelegate?) {
         self.client = client
         self.owner = owner
         self.repo = repo
+        self.labelListViewDelegate = labelListViewDelegate
         super.init()
     }
 
@@ -43,8 +45,8 @@ final class RepositorySummarySectionController: ListSwiftSectionController<Repos
                     + labelListViewHeightAndSpacing
                 return $0.collection.cellSize(with: ceil(height))
             },
-                   configure: {
-                    $0.configure($1.value)
+                   configure: { [weak self] in
+                    $0.configure($1.value, labelListViewDelegate: self?.labelListViewDelegate)
             }, didSelect: { [weak self] context in
                 guard let `self` = self else { return }
                 let issueModel = IssueDetailsModel(

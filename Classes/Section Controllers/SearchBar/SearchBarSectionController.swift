@@ -14,11 +14,12 @@ protocol SearchBarSectionControllerDelegate: class {
 }
 
 final class SearchBarSectionController: ListSwiftSectionController<String>, SearchBarCellDelegate {
-
+    static let listSwiftId = "header"
     public private(set) var query: String
 
     private weak var delegate: SearchBarSectionControllerDelegate?
     private let placeholder: String
+    private weak var searchBarCell: SearchBarCell?
 
     init(placeholder: String, delegate: SearchBarSectionControllerDelegate?, query: String = "") {
         self.delegate = delegate
@@ -35,6 +36,7 @@ final class SearchBarSectionController: ListSwiftSectionController<String>, Sear
                 guard let `self` = self else { return }
                 cell.delegate = self
                 cell.configure(query: self.query, placeholder: self.placeholder)
+                self.searchBarCell = cell
             })
         ]
     }
@@ -44,6 +46,14 @@ final class SearchBarSectionController: ListSwiftSectionController<String>, Sear
     func didChangeSearchText(cell: SearchBarCell, query: String) {
         self.query = query
         self.delegate?.didChangeSelection(sectionController: self, query: query)
+    }
+    
+    // MARK: Public API
+    
+    func setSearchBarQuery(_ query: String) {
+        searchBarCell?.configure(query: query, placeholder: placeholder)
+        self.query = query
+        delegate?.didChangeSelection(sectionController: self, query: query)
     }
 
 }
