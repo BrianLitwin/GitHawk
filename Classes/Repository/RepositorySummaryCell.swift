@@ -79,9 +79,12 @@ final class RepositorySummaryCell: SelectableCell {
         titleView.reposition(for: contentView.bounds.width)
         resizeLabelListView(labels: labelListView.labels, cacheKey: labelListView.labels.reduce("", {$0 + $1.name}))
     }
+    
+    var width: CGFloat {
+        return contentView.frame.width - (Styles.Sizes.columnSpacing * 2)
+    }
 
     private func resizeLabelListView(labels: [RepositoryLabel], cacheKey: String) {
-        let width = contentView.frame.width - (Styles.Sizes.columnSpacing * 2)
         let height = LabelListView.height(width: width, labels: labels, cacheKey: cacheKey)
         //check if height has changed before updating
         if height != labelListView.frame.height {
@@ -93,7 +96,7 @@ final class RepositorySummaryCell: SelectableCell {
 
     // MARK: Public API
 
-    func configure(_ model: RepositoryIssueSummaryModel) {
+    func configure(_ model: RepositoryIssueSummaryModel, labelListViewDelegate: LabelListViewDelegate?) {
         titleView.configure(with: model.title, width: contentView.bounds.width)
 
         let format = NSLocalizedString("#%d opened %@ by %@", comment: "")
@@ -118,7 +121,7 @@ final class RepositorySummaryCell: SelectableCell {
 
         if model.labels.count > 0 {
             labelListView.isHidden = false
-            labelListView.configure(labels: model.labels)
+            labelListView.configure(labels: model.labels, width: width, delegate: labelListViewDelegate)
             resizeLabelListView(labels: model.labels, cacheKey: model.labelSummary)
         } else {
             labelListView.isHidden = true

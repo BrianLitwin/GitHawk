@@ -20,8 +20,8 @@ final class RepositoryIssuesViewController: BaseListViewController<String>,
     BaseListViewControllerEmptyDataSource,
     BaseListViewControllerHeaderDataSource,
     SearchBarSectionControllerDelegate,
-IndicatorInfoProvider {
-
+IndicatorInfoProvider,
+LabelListViewDelegate {
     private var models = [RepositoryIssueSummaryModel]()
     private let owner: String
     private let repo: String
@@ -29,19 +29,34 @@ IndicatorInfoProvider {
     private let type: RepositoryIssuesType
     private let searchKey: ListDiffable = "searchKey" as ListDiffable
     private let debouncer = Debouncer()
-    private var previousSearchString = "is:open "
-    private var label: String?
+    private var searchBarModel: RepositorySearchBarQueryModel
+    private let presentingInTabman: Bool
+    
+    private var searchBarSectionController: SearchBarSectionController? {
+        return feed.swiftAdapter.sectionController(
+            for: SearchBarSectionController.listSwiftId
+        )
+    }
 
-    init(client: GithubClient, owner: String, repo: String, type: RepositoryIssuesType, label: String? = nil) {
+    init(
+        client: GithubClient,
+        owner: String,
+        repo: String,
+        type: RepositoryIssuesType,
+        label: String? = nil,
+        presentingInTabman: Bool = true
+        ) {
         self.owner = owner
         self.repo = repo
         self.client = RepositoryClient(githubClient: client, owner: owner, name: repo)
         self.type = type
-        self.label = label
-        if let label = label {
-            previousSearchString += "label:\"\(label)\" "
-        }
-
+        searchBarModel = RepositorySearchBarQueryModel(
+            type: type,
+            repo: repo,
+            owner: owner,
+            label: label
+        )
+        self.presentingInTabman = presentingInTabman
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load issues.", comment: "")
         )
@@ -64,9 +79,7 @@ IndicatorInfoProvider {
         super.viewDidLoad()
 
         makeBackBarItemEmpty()
-
-        let presentingInTabMan = label == nil
-        if presentingInTabMan {
+        if presentingInTabman {
             // set the frame in -viewDidLoad is required when working with TabMan
             feed.collectionView.frame = view.bounds
             feed.collectionView.contentInsetAdjustmentBehavior = .never
@@ -77,7 +90,7 @@ IndicatorInfoProvider {
 
     override func fetch(page: String?) {
         client.searchIssues(
-            query: fullQueryString,
+            query: searchBarModel.fullQueryString,
             nextPage: page as String?,
             containerWidth: view.safeContentWidth(with: feed.collectionView)
         ) { [weak self] (result: Result<RepositoryClient.RepositoryPayload>) in
@@ -98,19 +111,19 @@ IndicatorInfoProvider {
     // MARK: SearchBarSectionControllerDelegate
 
     func didChangeSelection(sectionController: SearchBarSectionController, query: String) {
-        guard previousSearchString != query else { return }
-        previousSearchString = query
+        guard searchBarModel.searchString != query else { return }
+        searchBarModel.set(query: query)
         debouncer.action = { [weak self] in self?.fetch(page: nil) }
     }
 
     // MARK: BaseListViewControllerHeaderDataSource
 
     func headerModel(for adapter: ListSwiftAdapter) -> ListSwiftPair {
-        return ListSwiftPair.pair("header", { [weak self, previousSearchString] in
+        return ListSwiftPair.pair("header", { [weak self ] in
             SearchBarSectionController(
                 placeholder: Constants.Strings.search,
                 delegate: self,
-                query: previousSearchString
+                query: self?.searchBarModel.searchString ?? ""
             )
         })
     }
@@ -123,7 +136,8 @@ IndicatorInfoProvider {
                 RepositorySummarySectionController(
                     client: client.githubClient,
                     owner: owner,
-                    repo: repo
+                    repo: repo,
+                    labelListViewDelegate: self
                 )
             })
         }
@@ -143,21 +157,18 @@ IndicatorInfoProvider {
         }
     }
 
-    // MARK: Private API
-
-    var fullQueryString: String {
-        let typeQuery: String
-        switch type {
-        case .issues: typeQuery = "is:issue"
-        case .pullRequests: typeQuery = "is:pr"
-        }
-        return "repo:\(owner)/\(repo) \(typeQuery) \(previousSearchString)".lowercased()
-    }
-
     // MARK: IndicatorInfoProvider
 
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return IndicatorInfo(title: title)
     }
 
+    // MARK: LabelListViewTapDelegate
+    
+    func labelListView(_ labelListView: LabelListView, didTapLabel label: String) {
+        guard let controller = searchBarSectionController else { return }
+        let query = searchBarModel.queryFor(label: label)
+        controller.setSearchBarQuery(query)
+        feed.collectionView.scrollToTop(animated: true) // ? about the timing of this, or whether its a good idea at all 
+    }
 }
