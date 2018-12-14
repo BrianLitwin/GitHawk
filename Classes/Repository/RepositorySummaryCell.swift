@@ -89,11 +89,17 @@ final class RepositorySummaryCell: SelectableCell {
                 make.height.equalTo(height)
             }
         }
+        let labelListViewWidth = min(LabelListView.width(labels: labels), labelListView.frame.width)
+        if labelListView.collectionView.frame.width < labelListViewWidth {
+            labelListView.snp.updateConstraints { make in
+                make.width.equalTo(labelListViewWidth)
+            }
+        }
     }
 
     // MARK: Public API
 
-    func configure(_ model: RepositoryIssueSummaryModel, labelTapDelegate: LabelListViewTapDelegate?) {
+    func configure(_ model: RepositoryIssueSummaryModel, labelListViewDelegate: LabelListViewDelegate?) {
         titleView.configure(with: model.title, width: contentView.bounds.width)
 
         let format = NSLocalizedString("#%d opened %@ by %@", comment: "")
@@ -118,7 +124,7 @@ final class RepositorySummaryCell: SelectableCell {
 
         if model.labels.count > 0 {
             labelListView.isHidden = false
-            labelListView.configure(labels: model.labels, tapDelegate: labelTapDelegate)
+            labelListView.configure(labels: model.labels, delegate: labelListViewDelegate)
             resizeLabelListView(labels: model.labels, cacheKey: model.labelSummary)
         } else {
             labelListView.isHidden = true

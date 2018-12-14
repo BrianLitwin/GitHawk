@@ -9,8 +9,8 @@
 import Foundation
 import SnapKit
 
-protocol LabelListViewTapDelegate: class {
-    func didTap(label: String)
+protocol LabelListViewDelegate: class {
+    func labelListView(_ labelListView: LabelListView, didTapLabel label: String)
 }
 
 final class LabelListView: UIView,
@@ -19,15 +19,19 @@ UICollectionViewDelegate,
 UICollectionViewDelegateFlowLayout {
 
     private static var cache = [String: CGFloat]()
-    private weak var tapDelegate: LabelListViewTapDelegate?
+    private weak var delegate: LabelListViewDelegate?
+    
     static func width(labels: [RepositoryLabel]) -> CGFloat {
-        let key = labels.reduce("width:", {$0 + $1.name})
+        let key = labels.reduce("width: ", {$0 + $1.name})
+        print(key)
         if let cachedWidth = cache[key] {
+            print("returning cached width: \(cachedWidth)")
             return cachedWidth
         }
         let interitemSpacing = labels.count > 1 ? CGFloat(labels.count - 1) * Styles.Sizes.labelSpacing : 0.0
-        let width = labels.reduce(0, { $0 + LabelListCell.size($1.name).width }) + interitemSpacing
+        let width =  labels.reduce(0, { $0 + LabelListCell.size($1.name).width }) + interitemSpacing
         LabelListView.cache[key] = width
+        print("returning calculated width: \(width)")
         return width
     }
 
@@ -38,9 +42,7 @@ UICollectionViewDelegateFlowLayout {
         }
 
         let rowHeight = LabelListCell.size(labels.first?.name ?? "").height
-        let interitemSpacing = labels.count > 1 ? CGFloat(labels.count - 1) * Styles.Sizes.labelSpacing : 0.0
-        let labelTextTotalWidth = labels.reduce(0, { $0 + LabelListCell.size($1.name).width }) + interitemSpacing
-        let labelRows = ceil(labelTextTotalWidth / width)
+        let labelRows = ceil(LabelListView.width(labels: labels) / width)
         let rowSpacing = labelRows > 1 ? (labelRows - 1) * Styles.Sizes.labelSpacing : 0.0
 
         let height = ceil((rowHeight * labelRows) + rowSpacing)
@@ -75,13 +77,8 @@ UICollectionViewDelegateFlowLayout {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let width = min(LabelListView.width(labels: labels), frame.width)
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(snp.top)
-            make.bottom.equalTo(snp.bottom)
-            make.leading.equalTo(snp.leading)
-            make.width.equalTo(width)
-        }
+        let width = min(LabelListView.width(labels: labels), bounds.width)
+        collectionView.frame = bounds 
     }
 
     // MARK: UICollectionViewDataSource
@@ -105,14 +102,14 @@ UICollectionViewDelegateFlowLayout {
     //MARK: UICollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        tapDelegate?.didTap(label: labels[indexPath.row].name)
+        delegate?.labelListView(self, didTapLabel: labels[indexPath.row].name)
     }
 
     // MARK: Public API
 
-    func configure(labels: [RepositoryLabel], tapDelegate: LabelListViewTapDelegate?) {
+    func configure(labels: [RepositoryLabel], delegate: LabelListViewDelegate?) {
         self.labels = labels
-        self.tapDelegate = tapDelegate
+        self.delegate = delegate
         collectionView.reloadData()
     }
 }

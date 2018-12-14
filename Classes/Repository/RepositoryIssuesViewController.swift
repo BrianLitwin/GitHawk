@@ -21,8 +21,8 @@ final class RepositoryIssuesViewController: BaseListViewController<String>,
     BaseListViewControllerHeaderDataSource,
     SearchBarSectionControllerDelegate,
 IndicatorInfoProvider,
-LabelListViewTapDelegate {
-
+LabelListViewDelegate {
+    
     private var models = [RepositoryIssueSummaryModel]()
     private let owner: String
     private let repo: String
@@ -30,19 +30,25 @@ LabelListViewTapDelegate {
     private let type: RepositoryIssuesType
     private let searchKey: ListDiffable = "searchKey" as ListDiffable
     private let debouncer = Debouncer()
-    private var previousSearchString = "is:open "
-    private var label: String?
+    private var searchBarModel: RepositorySearchBarQueryModel
+    
+    private var searchBarSectionController: SearchBarSectionController? {
+        return feed.swiftAdapter.sectionController(
+            for: SearchBarSectionController.listSwiftId
+        )
+    }
 
     init(client: GithubClient, owner: String, repo: String, type: RepositoryIssuesType, label: String? = nil) {
         self.owner = owner
         self.repo = repo
         self.client = RepositoryClient(githubClient: client, owner: owner, name: repo)
         self.type = type
-        self.label = label
-        if let label = label {
-            previousSearchString += "label:\"\(label)\" "
-        }
-
+        searchBarModel = RepositorySearchBarQueryModel(
+            type: type,
+            repo: repo,
+            owner: owner,
+            label: label
+        )
         super.init(
             emptyErrorMessage: NSLocalizedString("Cannot load issues.", comment: "")
         )
@@ -66,7 +72,8 @@ LabelListViewTapDelegate {
 
         makeBackBarItemEmpty()
 
-        let presentingInTabMan = label == nil
+        // TODO: this is no longer valid -> can search labels from repositoryIssues VS
+        let presentingInTabMan = false
         if presentingInTabMan {
             // set the frame in -viewDidLoad is required when working with TabMan
             feed.collectionView.frame = view.bounds
@@ -78,7 +85,7 @@ LabelListViewTapDelegate {
 
     override func fetch(page: String?) {
         client.searchIssues(
-            query: fullQueryString,
+            query: searchBarModel.fullQueryString,
             nextPage: page as String?,
             containerWidth: view.safeContentWidth(with: feed.collectionView)
         ) { [weak self] (result: Result<RepositoryClient.RepositoryPayload>) in
@@ -99,19 +106,19 @@ LabelListViewTapDelegate {
     // MARK: SearchBarSectionControllerDelegate
 
     func didChangeSelection(sectionController: SearchBarSectionController, query: String) {
-        guard previousSearchString != query else { return }
-        previousSearchString = query
+        guard searchBarModel.searchString != query else { return }
+        searchBarModel.set(query: query)
         debouncer.action = { [weak self] in self?.fetch(page: nil) }
     }
 
     // MARK: BaseListViewControllerHeaderDataSource
 
     func headerModel(for adapter: ListSwiftAdapter) -> ListSwiftPair {
-        return ListSwiftPair.pair("header", { [weak self, previousSearchString] in
+        return ListSwiftPair.pair("header", { [weak self ] in
             SearchBarSectionController(
                 placeholder: Constants.Strings.search,
                 delegate: self,
-                query: previousSearchString
+                query: self?.searchBarModel.searchString ?? ""
             )
         })
     }
@@ -125,7 +132,7 @@ LabelListViewTapDelegate {
                     client: client.githubClient,
                     owner: owner,
                     repo: repo,
-                    labelTapDelegate: self
+                    labelListViewDelegate: self
                 )
             })
         }
@@ -145,17 +152,6 @@ LabelListViewTapDelegate {
         }
     }
 
-    // MARK: Private API
-
-    var fullQueryString: String {
-        let typeQuery: String
-        switch type {
-        case .issues: typeQuery = "is:issue"
-        case .pullRequests: typeQuery = "is:pr"
-        }
-        return "repo:\(owner)/\(repo) \(typeQuery) \(previousSearchString)".lowercased()
-    }
-
     // MARK: IndicatorInfoProvider
 
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
@@ -164,8 +160,11 @@ LabelListViewTapDelegate {
 
     // MARK: LabelListViewTapDelegate
     
-    func didTap(label: String) {
-        print(label)
+    func labelListView(_ labelListView: LabelListView, didTapLabel label: String) {
+        guard let controller = searchBarSectionController else { return }
+        let query = searchBarModel.queryFor(label: label)
+        controller.setSearchBarQuery(query)
+        // scroll to top
     }
-    
+
 }
